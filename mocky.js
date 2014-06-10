@@ -1,23 +1,42 @@
-var mocky = function(patterns) {
+var Mocky = function(patterns) {
 	
-	patterns_str = JSON.stringify(patterns);
-	patterns_json = JSON.parse(patterns_str);
-
 	var f = function(n) {
-		
-		// obviously this will be moved to the end
-		// when all the pattern matching has been built
-		
-		if (patterns_json[n] == undefined)
+
+		if (patterns[n] == undefined)
 		{
-			throw "non exhaustive pattern matching"
+			if (patterns["$"] != undefined) return give("$", n);
+			
+			else if (patterns["_"] != undefined) return give("_");
+			
+			else {
+				throw "non exhaustive pattern matching";
+			}
 		}
 		
-		return patterns_json[n];
+		else { 
+			return give(n);
+		}
+
+	}
+	
+	var give = function(sym, n) {
+		
+		if (typeof(patterns[sym]) === "function")
+		{
+			var temp = patterns[sym];
+			var param = ((sym == "$") ? n : sym);
+			return temp(param);
+		}  
+		
+		// for cases like func 2 = 1
+		else {
+			var foo = patterns[sym];
+			return foo;
+		}
+		
 	}
 	
 	return f;
 	
 };
-
 
