@@ -1,4 +1,4 @@
-var Mocky = function(patterns) {
+var Mocky = (function(patterns) {
 	
 	var f = function(n) {
 
@@ -38,5 +38,5 @@ var Mocky = function(patterns) {
 	
 	return f;
 	
-};
+});
 

@@ -14,9 +14,7 @@ function foo() {
 	alert('hi');
 }
 
-var _ = Mocky.any;
-
-var a = new Mocky({
+var a = mocky({
 	0 : 1,
 	1 : 2,
 	3 : function() {console.log("b")},
@@ -27,11 +25,26 @@ var a = new Mocky({
 	_ : 10 // magic key "_" but not a good way to implement this
 });
 
-var fact = new Mocky({
+var fact = mocky({
 	0 : 1,
 	"$" : function(n) {return n * fact(n-1)}
 });
 
-// var res = fact(3);
-// console.log(res);
+
+describe("Calling a()", function() {
+    it("matches patterns", function() {
+        expect(a(0)).toEqual(1);
+    });
+});
+
+describe("Calling fact()", function() {
+    it("Returns factorial", function() {
+        expect(fact(3)).toEqual(6);
+    });
+});
+
+var fact = mockyList(
+	[0 : 1],
+	["$" : function(n) {return n * fact(n-1)}]
+);
 
