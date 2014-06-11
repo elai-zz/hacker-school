@@ -1,47 +1,39 @@
 (function(exports) {
 	
-	var mocky = createMatcher;
-	mocky.createMatcher = createMatcher;
-	exports.mocky = mocky;
+	var mockyList = createMatcher;
+	mockyList.createMatcher = createMatcher;
+	exports.mockyList = mockyList;
 	
 	function createMatcher(patterns) {
+		
 		return function(n) {
-
-			if (patterns[n] == undefined)
-			{
-				if (patterns["$"] != undefined) return give("$", patterns, n);
 			
-				else if (patterns["_"] != undefined) return give("_", patterns);
+			patternsL = [];
+		
+			for (var i = 0; i < arguments.length; i++) {
+				parsed = arguments[i].split(",");
+				newObj = {"k": parsed[0], "v" : parsed[1]};
 			
-				else {
-					throw "non exhaustive pattern matching";
+				patterns.push(newObj);
+			
+			}
+			
+			var foo;
+			
+			for (var i = 0; i < patternsL.length; i++) {
+				
+				if (patternsL[i]["k"] == n)
+				{
+					return patternsL[i]["v"];
 				}
 			}
+			
+			throw "non exhaustive pattern matching";
 		
-			else { 
-				return give(n, patterns);
-			}
-
 		}
 
 	}
 	
-	var give = function(sym, patterns, n) {
-		
-		if (typeof(patterns[sym]) === "function")
-		{
-			var temp = patterns[sym];
-			var param = ((sym == "$") ? n : sym);
-			return temp(param);
-		}  
-		
-		// for cases like func 2 = 1
-		else {
-			var foo = patterns[sym];
-			return foo;
-		}
-		
-	}
 	
 })(this);
 

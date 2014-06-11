@@ -1,25 +1,33 @@
-var Mocky = (function(patterns) {
+(function(exports) {
 	
-	var f = function(n) {
-
-		if (patterns[n] == undefined)
-		{
-			if (patterns["$"] != undefined) return give("$", n);
-			
-			else if (patterns["_"] != undefined) return give("_");
-			
-			else {
-				throw "non exhaustive pattern matching";
-			}
-		}
+	var mocky = createMatcher;
+	mocky.createMatcher = createMatcher;
+	exports.mocky = mocky;
+	
+	function createMatcher(patterns) {
 		
-		else { 
-			return give(n);
+		return function(n) {
+
+			if (patterns[n] == undefined)
+			{
+				if (patterns["$"] != undefined) return give("$", patterns, n);
+			
+				else if (patterns["_"] != undefined) return give("_", patterns);
+			
+				else {
+					throw "non exhaustive pattern matching";
+				}
+			}
+		
+			else { 
+				return give(n, patterns);
+			}
+
 		}
 
 	}
 	
-	var give = function(sym, n) {
+	var give = function(sym, patterns, n) {
 		
 		if (typeof(patterns[sym]) === "function")
 		{
@@ -36,7 +44,5 @@ var Mocky = (function(patterns) {
 		
 	}
 	
-	return f;
-	
-});
+})(this);
 

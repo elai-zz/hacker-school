@@ -7,15 +7,6 @@
 	function createMatcher(patterns) {
 		
 		return function(n) {
-			
-			patterns = {};
-			
-			for (var i = 0; i < arguments.length; i++) {
-				newObj = {};
-				parsed = arguments[i].split(",");
-				newObj[parsed[0]] = parsed[1];
-				
-			}
 
 			if (patterns[n] == undefined)
 			{

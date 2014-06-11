@@ -14,37 +14,47 @@ function foo() {
 	alert('hi');
 }
 
-var a = mocky({
-	0 : 1,
-	1 : 2,
-	3 : function() {console.log("b")},
-	5 : function() {
-		foo();
-		console.log("c");
-	},
-	_ : 10 // magic key "_" but not a good way to implement this
-});
-
-var fact = mocky({
-	0 : 1,
-	"$" : function(n) {return n * fact(n-1)}
-});
-
-
-describe("Calling a()", function() {
-    it("matches patterns", function() {
-        expect(a(0)).toEqual(1);
-    });
-});
-
-describe("Calling fact()", function() {
-    it("Returns factorial", function() {
-        expect(fact(3)).toEqual(6);
-    });
-});
-
-var fact = mockyList(
-	[0 : 1],
-	["$" : function(n) {return n * fact(n-1)}]
+var c = mockyList(
+	[2,3], 
+	[1,2]
 );
+
+describe("Calling c()", function() {
+    it("returns patterns", function() {
+        expect(c(2)).toEqual(4);
+});
+
+// var a = mocky({
+// 	0 : 1,
+// 	1 : 2,
+// 	3 : function() {console.log("b")},
+// 	5 : function() {
+// 		foo();
+// 		console.log("c");
+// 	},
+// 	_ : 10 // magic key "_" but not a good way to implement this
+// });
+// 
+// var fact = mocky({
+// 	0 : 1,
+// 	"$" : function(n) {return n * fact(n-1)}
+// });
+// 
+// 
+// describe("Calling a()", function() {
+//     it("matches patterns", function() {
+//         expect(a(0)).toEqual(1);
+//     });
+// });
+// 
+// describe("Calling fact()", function() {
+//     it("Returns factorial", function() {
+//         expect(fact(3)).toEqual(6);
+//     });
+// });
+// 
+// var fact = mockyList(
+// 	[0 : 1],
+// 	["$" : function(n) {return n * fact(n-1)}]
+// );
 
