@@ -4,33 +4,47 @@
 	mockyList.createMatcher = createMatcher;
 	exports.mockyList = mockyList;
 	
-	function createMatcher(patterns) {
+	function createMatcher() {
+		patterns = arguments;
 		
 		return function(n) {
 			
 			patternsL = [];
-		
-			for (var i = 0; i < arguments.length; i++) {
-				parsed = arguments[i].split(",");
-				newObj = {"k": parsed[0], "v" : parsed[1]};
 			
-				patterns.push(newObj);
-			
+		    for (var i = 0; i < patterns.length; i++) {
+				newObj = {"k": patterns[i][0], "v" : patterns[i][1]};		
+				patternsL.push(newObj); 			
 			}
-			
-			var foo;
 			
 			for (var i = 0; i < patternsL.length; i++) {
 				
 				if (patternsL[i]["k"] == n)
 				{
-					return patternsL[i]["v"];
+					if (typeof(patternsL[i]["v"]) === "function"){
+						
+						fxn = String(patternsL[i]["v"]);
+						
+						if ((fxn.split("("))[1][0] != ")")
+						{
+							return patternsL[i]["v"](n);
+						}
+						else
+						{
+							var temp = patternsL[i]["v"];
+							return temp();
+					
+						}
+					}
+					else {
+						return patternsL[i]["v"];
+					}
 				}
 			}
 			
 			throw "non exhaustive pattern matching";
 		
-		}
+		 }
+		
 
 	}
 	

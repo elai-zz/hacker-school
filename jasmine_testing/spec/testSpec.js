@@ -16,13 +16,30 @@ function foo() {
 
 var c = mockyList(
 	[2,3], 
-	[1,2]
+	[1,2],
+	[3 , function() {return "b"}],
+	["apple", function (n) { return "I like " + n}]
 );
+
 
 describe("Calling c()", function() {
     it("returns patterns", function() {
-        expect(c(2)).toEqual(4);
+        expect(c(2)).toEqual(3);
+	});
 });
+
+describe("Calling c()", function() {
+    it("returns patterns", function() {
+        expect(c(3)).toEqual("b");
+	});
+});
+
+describe("Calling c()", function() {
+    it("returns patterns", function() {
+        expect(c("apple")).toEqual("I like apple");
+	});
+});
+
 
 // var a = mocky({
 // 	0 : 1,
