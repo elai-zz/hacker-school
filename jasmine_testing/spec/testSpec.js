@@ -10,32 +10,63 @@ var sample = new mocky(
 Open test.html and examine result in your browser console
 */
 
+var _ = mockyList.any;
+var $ = mockyList.param;
+
 function foo() {
 	alert('hi');
+}
+
+function foo1() {
+	return 1;
 }
 
 var c = mockyList(
 	[2,3], 
 	[1,2],
-	[3 , function() {return "b"}],
-	["apple", function (n) { return "I like " + n}]
+	[3 , function() {
+		a = foo1();
+		return "b" + 1}],
+	["apple", function (n) { return "I like " + n}],
+	[_, "wow!"]
 );
 
+var d = mockyList(
+	[$, function(n) {
+	return n+n}]);
 
-describe("Calling c()", function() {
-    it("returns patterns", function() {
+describe("calling d(66)", function() {
+    it("param token", function() {
+        expect(d(66)).toEqual(132);
+	});
+});
+
+describe("calling c(66)", function() {
+    it("to return wow!", function() {
+        expect(c(66)).toEqual("wow!");
+	});
+});
+
+describe("Calling c(_)", function() {
+    it("should be wow!", function() {
+        expect(c(_)).toEqual("wow!");
+	});
+});
+
+describe("Calling c(2)", function() {
+    it("should be 3", function() {
         expect(c(2)).toEqual(3);
 	});
 });
 
-describe("Calling c()", function() {
-    it("returns patterns", function() {
-        expect(c(3)).toEqual("b");
+describe("Calling c(3)", function() {
+    it("should be b1", function() {
+        expect(c(3)).toEqual("b1");
 	});
 });
 
-describe("Calling c()", function() {
-    it("returns patterns", function() {
+describe("Calling c('apple')", function() {
+    it("should be 'I like apple'", function() {
         expect(c("apple")).toEqual("I like apple");
 	});
 });
