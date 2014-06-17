@@ -33,22 +33,26 @@
 
 <p>Mocky is a small JavaScript library with no dependencies. Mocky allows you to accomplish pattern matching found in functional programming languages such as ML, Haskell, Erlang, and OCaml in JavaScript. Currently, Mocky is capable of pattern matching with one parameter (see below examples). There are plans in the future to expand, or feel free to contribute. Mocky uses Jasmine testing framework and another library similar to Mocky is <a href="https://github.com/bramstein/funcy">Funcy</a>.</p>
 
-<pre><code>$ cd your_repo_root/repo_name
-$ git fetch origin
-$ git checkout gh-pages
+<h3>
+<a name="how-to-use" class="anchor" href="#how-to-use"><span class="octicon octicon-link"></span></a>How to use?</h3>
+
+<p>Simply include mocky.js in your .html file. </p>
+
+<h3>
+<a name="examples" class="anchor" href="#examples"><span class="octicon octicon-link"></span></a>Examples</h3>
+
+<ol>
+<li>Make a new Mocky object and load object with patterns. For anObj (below), if you call anObj(2), you'll get 3. If you call anObj(3), you'll invoke the anonymous function that would call some function foo() and return "b1" as a result from "b" + 1. </li>
+</ol><pre><code>var anObj = mocky(
+    [2,3], 
+    [1,2],
+    [3 , function() {
+        a = foo();
+        return "b" + 1}],
+    ["apple", function (n) { return "I like " + n}],
+    [_, "wow!"]
+);
 </code></pre>
-
-<p>If you're using the GitHub for Mac, simply sync your repository and you'll see the new branch.</p>
-
-<h3>
-<a name="designer-templates" class="anchor" href="#designer-templates"><span class="octicon octicon-link"></span></a>Designer Templates</h3>
-
-<p>We've crafted some handsome templates for you to use. Go ahead and continue to layouts to browse through them. You can easily go back to edit your page before publishing. After publishing your page, you can revisit the page generator and switch to another theme. Your Page content will be preserved if it remained markdown format.</p>
-
-<h3>
-<a name="rather-drive-stick" class="anchor" href="#rather-drive-stick"><span class="octicon octicon-link"></span></a>Rather Drive Stick?</h3>
-
-<p>If you prefer to not use the automatic generator, push a branch named <code>gh-pages</code> to your repository to create a page manually. In addition to supporting regular HTML content, GitHub Pages support Jekyll, a simple, blog aware static site generator written by our own Tom Preston-Werner. Jekyll makes it easy to create site-wide headers and footers without having to copy them across every page. It also offers intelligent blog support and other advanced templating features.</p>
 
 <h3>
 <a name="authors-and-contributors" class="anchor" href="#authors-and-contributors"><span class="octicon octicon-link"></span></a>Authors and Contributors</h3>
