@@ -1,15 +1,3 @@
-/*
-Sample Usage:
-
-var sample = new mocky(
-{
-	0 : 1,
-	1 : 2,
-});
-
-Open test.html and examine result in your browser console
-*/
-
 var _ = mockyList.any;
 var $ = mockyList.param;
 
@@ -69,7 +57,7 @@ describe("Calling c('apple')", function() {
     it("should be 'I like apple'", function() {
         expect(c("apple")).toEqual("I like apple");
 	});
-});
+}); 
 
 // unit test for arrayMatch
 
@@ -80,20 +68,20 @@ describe("Calling arrayMatch", function() {
 });
 
 describe("Calling arrayMatch", function() {
-    it("should return 1", function() {
-        expect(mockyList.arrayMatch(["a","b","c"], [{"k": ["a","b","c"], "v": 2}, {"k": ["a","b","d"], "v": 3}])).toEqual(1);
+    it("should return 2", function() {
+        expect(mockyList.arrayMatch(["a","b","c"], [{"k": ["a","b","c"], "v": 2}, {"k": ["a","b","d"], "v": 3}])).toEqual(2);
 	});
 });
 
 describe("Calling arrayMatch", function() {
-    it("should return 1", function() {
-        expect(mockyList.arrayMatch(["a","b","c"], [{"k": ["a","b","d"], "v": 3},{"k": ["a","b","c"], "v": 2},])).toEqual(1);
+    it("should return 2", function() {
+        expect(mockyList.arrayMatch(["a","b","c"], [{"k": ["a","b","d"], "v": 3},{"k": ["a","b","c"], "v": 2},])).toEqual(2);
 	});
 });
 
 describe("Calling arrayMatch", function() {
-    it("should return 1", function() {
-        expect(mockyList.arrayMatch([], [{"k": [], "v": 2},{"k": ["a","b","c"], "v": 88},])).toEqual(1);
+    it("should return 2", function() {
+        expect(mockyList.arrayMatch([], [{"k": [], "v": 2},{"k": ["a","b","c"], "v": 88},])).toEqual(2);
 	});
 });
 
@@ -110,28 +98,49 @@ describe("Calling arrayMatch", function() {
 });
 
 describe("Calling arrayMatch", function() {
-    it("should return 5", function() {
-        expect(mockyList.arrayMatch(["a","b","c"], [{"k": [_], "v": 3}])).toEqual(5);
+    it("should return 3", function() {
+        expect(mockyList.arrayMatch(["a","b","c"], [{"k": [_], "v": 3}])).toEqual(3);
 	});
 });
 
+
 describe("Calling arrayMatch", function() {
- 	it("should return 1", function() {
-     	expect(mockyList.arrayMatch(["a","b","d","c"], [{"k": ["a",_,_,"d"], "v": 3}])).toEqual(null);
+ 	it("should return 4", function() {
+     	expect(mockyList.arrayMatch(["a","b","d","c"], [{"k": [_], "v": 4}, {"k": ["a","b","b","c"], "v": 3}])).toEqual(4);
  	});
 });
 
-describe("Calling arrayMatch", function() {
- 	it("should return 1", function() {
-     	expect(mockyList.arrayMatch(["a","b","d","c"], [{"k": ["a",_,_,"c"], "v": 3}])).toEqual(1);
+describe("Calling arrayMatch with two any's at beginning", function() {
+ 	it("should return 4", function() {
+     	expect(mockyList.arrayMatch(["a","b","d","c"], [{"k": [_, "d","c"], "v": 4}])).toEqual(4);
  	});
 });
 
-describe("Calling arrayMatch", function() {
- 	it("should return 1", function() {
-     	expect(mockyList.arrayMatch(["a","b","d","c"], [{"k": [_], "v": 4}, {"k": ["a",_,_,"c"], "v": 3}])).toEqual(5);
+describe("Calling arrayMatch with one any's at beginning", function() {
+ 	it("should return 4", function() {
+     	expect(mockyList.arrayMatch(["a","b","d","c"], [{"k": [_, "c"], "v": 4}])).toEqual(4);
  	});
 });
 
+describe("Calling arrayMatch with one any's at beginning", function() {
+ 	it("should return busy bee", function() {
+     	expect(mockyList.arrayMatch(["a","b","d","d","e"], [{"k": [_, "c"], "v": "busy bee"},{"k": [_, "d", _], "v": "bee"}])).toEqual("busy bee");
+ 	});
+}); 
+
+// unit test mixing any and param
+
+describe("Calling arrayMatch with mixed param and any", function() {
+ 	it("should return 3", function() {
+     	expect(mockyList.arrayMatch(["a","b","d","d","e"], [{"k": ["c", _], "v": 4},{"k": [$, "d", _], "v": 3}])).toEqual(3);
+ 	});
+}); 
+
+// why is this one having trouble?
+// describe("Calling arrayMatch with mixed param and any", function() {
+//  	it("should return 4", function() {
+//      	expect(mockyList.arrayMatch(["a","b","d","d","e"], [{"k": [_,"c",_], "v": 2},{"k": [_, "d", $], "v": 4}])).toEqual(4);
+//  	});
+// }); 
 
 

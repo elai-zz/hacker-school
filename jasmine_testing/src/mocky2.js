@@ -92,23 +92,93 @@
 		}
 	}
 	
+	function returnFuncOrAtom(ret, ob) {
+		
+		if (typeof(ret) === "function") return ret(ob);
+		else return ret;
+		
+	}
 	function arrayMatch(n, p) {
 		for (var i = 0; i < p.length; i++) {
 			var currPatternKey = p[i]["k"];
 			var currPatternVal = p[i]["v"];
 			var j = 0;
 			
-			if (currPatternKey[j] == mockyList.any || currPatternKey[j] == mockyList.param) {
-				return 5; // we see a [_] or a [$]
+			// a state to see whether we have seen an underscore
+			var anySeen = false;
+			
+			// we modify n in the process depending on pattern
+			// this is to keep the beginning state of n
+			var copyN = n; 
+			
+			// in case we see a param char
+			var paramMatch;
+			
+			if (currPatternKey[j] == mockyList.any || 
+				currPatternKey[j] == mockyList.param) {
+					
+				if (currPatternKey.length == 1){
+					// we see a [_] or a [$]
+					return returnFuncOrAtom(currPatternVal, n);
+
+				} 
+				
+				else if (currPatternKey[j] == mockyList.param) {
+					// we are seeing something like [$,_]
+					console.log("here");
+					if (currPatternKey[1] == mockyList.any) {
+						return returnFuncOrAtom(currPatternVal, n[1]);
+					}
+					
+				}
+					
+			
+				else {
+					// we are seeing something like [_:$]
+					if (currPatternKey[1] == mockyList.param) {
+						paramMatch = n.slice(1); //we have a param
+						return returnFuncOrAtom(currPatternVal, paramMatch);
+					}
+					
+					// we are seeing something like [_:_:$]
+					else {
+						while (currPatternKey[1] == mockyList.any) {
+							n = n.slice(1);
+							currPatternKey = currPatternKey.slice(1);		
+						}
+						paramMatch = n;
+						return returnFuncOrAtom(currPatternVal, paramMatch);
+					}	
+				}
+							
 			}
 			
 			// we assume that the input is going to be same or longer than pattern key
 			// while j is within range, otherwise, we can get undefined === undefined
+			
+			// as soon as we can see a _, we don't see more atoms. 
+			// entering this while loop, we know it must be a non param, any.
 			while (j < currPatternKey.length && (currPatternKey[j] === n[j] || 
-				currPatternKey[j] == mockyList.any || currPatternKey[j] == mockyList.param)) {
+				currPatternKey[j] == mockyList.any || 
+				currPatternKey[j] == mockyList.param)) {
+				
+				// we don't see [a,_,_,a] so we need to mark this flag
+				if (anySeen && currPatternKey[j] === n[j]) {
+					//throw "unexpected type following any";
+					return null;
+				}
+				
+				if (currPatternKey[j] == mockyList.param) {
+					// as soon as we see a param, we can stop and match. 
+					paramMatch = n.slice(j);
+					return returnFuncOrAtom(currPatternVal, paramMatch);
+				}
 					
-				if (currPatternKey[j] != n[j]) {
-					if (j+1 == currPatternKey.length) return 5; // return now because all is matched
+				else if (currPatternKey[j] == mockyList.any) {
+					anySeen = true;
+					if (j+1 == currPatternKey.length) {
+						return returnFuncOrAtom(currPatternVal, n);
+					} // return now because all is matched
 				}
 	
 				j++;
@@ -116,13 +186,13 @@
 
 			// exact match found
 			if (currPatternKey.length == j && n.length == j) {
-				return 1;
+				return returnFuncOrAtom(currPatternVal, n);
 			}
+			
+			n = copyN;
 			
 		}
 		return null;
 	}
 	
-	
 })(this);
-
