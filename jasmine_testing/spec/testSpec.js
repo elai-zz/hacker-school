@@ -71,38 +71,67 @@ describe("Calling c('apple')", function() {
 	});
 });
 
+// unit test for arrayMatch
 
-// var a = mocky({
-// 	0 : 1,
-// 	1 : 2,
-// 	3 : function() {console.log("b")},
-// 	5 : function() {
-// 		foo();
-// 		console.log("c");
-// 	},
-// 	_ : 10 // magic key "_" but not a good way to implement this
-// });
-// 
-// var fact = mocky({
-// 	0 : 1,
-// 	"$" : function(n) {return n * fact(n-1)}
-// });
-// 
-// 
-// describe("Calling a()", function() {
-//     it("matches patterns", function() {
-//         expect(a(0)).toEqual(1);
-//     });
-// });
-// 
-// describe("Calling fact()", function() {
-//     it("Returns factorial", function() {
-//         expect(fact(3)).toEqual(6);
-//     });
-// });
-// 
-// var fact = mockyList(
-// 	[0 : 1],
-// 	["$" : function(n) {return n * fact(n-1)}]
-// );
+describe("Calling arrayMatch", function() {
+    it("should return null", function() {
+        expect(mockyList.arrayMatch(["a","b","c"],[])).toEqual(null);
+	});
+});
+
+describe("Calling arrayMatch", function() {
+    it("should return 1", function() {
+        expect(mockyList.arrayMatch(["a","b","c"], [{"k": ["a","b","c"], "v": 2}, {"k": ["a","b","d"], "v": 3}])).toEqual(1);
+	});
+});
+
+describe("Calling arrayMatch", function() {
+    it("should return 1", function() {
+        expect(mockyList.arrayMatch(["a","b","c"], [{"k": ["a","b","d"], "v": 3},{"k": ["a","b","c"], "v": 2},])).toEqual(1);
+	});
+});
+
+describe("Calling arrayMatch", function() {
+    it("should return 1", function() {
+        expect(mockyList.arrayMatch([], [{"k": [], "v": 2},{"k": ["a","b","c"], "v": 88},])).toEqual(1);
+	});
+});
+
+describe("Calling arrayMatch", function() {
+    it("should return null", function() {
+        expect(mockyList.arrayMatch([], [{"k": ["a","b","c"], "v": 88},])).toEqual(null);
+	});
+});
+
+describe("Calling arrayMatch", function() {
+    it("should return null", function() {
+        expect(mockyList.arrayMatch(["a","b","c"], [{"k": ["a","b","d"], "v": 3}])).toEqual(null);
+	});
+});
+
+describe("Calling arrayMatch", function() {
+    it("should return 5", function() {
+        expect(mockyList.arrayMatch(["a","b","c"], [{"k": [_], "v": 3}])).toEqual(5);
+	});
+});
+
+describe("Calling arrayMatch", function() {
+ 	it("should return 1", function() {
+     	expect(mockyList.arrayMatch(["a","b","d","c"], [{"k": ["a",_,_,"d"], "v": 3}])).toEqual(null);
+ 	});
+});
+
+describe("Calling arrayMatch", function() {
+ 	it("should return 1", function() {
+     	expect(mockyList.arrayMatch(["a","b","d","c"], [{"k": ["a",_,_,"c"], "v": 3}])).toEqual(1);
+ 	});
+});
+
+describe("Calling arrayMatch", function() {
+ 	it("should return 1", function() {
+     	expect(mockyList.arrayMatch(["a","b","d","c"], [{"k": [_], "v": 4}, {"k": ["a",_,_,"c"], "v": 3}])).toEqual(5);
+ 	});
+});
+
+
 

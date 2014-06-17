@@ -2,6 +2,7 @@
 	
 	var mockyList = createMatcher;
 	mockyList.createMatcher = createMatcher;
+	mockyList.arrayMatch = arrayMatch;
 	exports.mockyList = mockyList;
 	
 	mockyList.any = (function () {
@@ -42,46 +43,84 @@
 				throw "ambiguous pattern any and param";
 			}
 			
-			for (var i = 0; i < patternsL.length; i++) {
+			/* now breaking it up to different cases */
+			
+			if (n.isArray) {
+				var arrayRes = arrayMatch(n, patternsL);
+				if (arrayRes) {
+					return arrayRes();
+				}
+			}
+			
+			else {
+				for (var i = 0; i < patternsL.length; i++) {
 				
-				if (patternsL[i]["k"] == n)
-				{
-					if (typeof(patternsL[i]["v"]) === "function"){
+					if (patternsL[i]["k"] == n)
+					{
+						if (typeof(patternsL[i]["v"]) === "function"){
 						
-						return patternsL[i]["v"](n);
-					}
-					else {
-						return patternsL[i]["v"];
+							return patternsL[i]["v"](n);
+						}
+						else {
+							return patternsL[i]["v"];
+						}
 					}
 				}
+			
 			}
 			
 			if (anyPattern)
 			{
-				return returnFunctionOrPrim(anyPattern);
+				if (typeof(anyPattern) === "function") {
+					return anyPattern();
+				}
+				else {
+					return anyPattern;
+				}
 			}
 			
 			else if (paramExist) {	
 				var tmp = paramExist;
 				return tmp(n);
-				
-			}
 			
+			}
+		
+			// throwing an error
 			else {
 				throw "non exhaustive pattern matching";
-			}
-		 }
-		
-
+			} 
+		}
 	}
 	
-	function returnFunctionOrPrim(v) {
-		if (typeof(v) === "function") {
-			return v();
+	function arrayMatch(n, p) {
+		for (var i = 0; i < p.length; i++) {
+			var currPatternKey = p[i]["k"];
+			var currPatternVal = p[i]["v"];
+			var j = 0;
+			
+			if (currPatternKey[j] == mockyList.any || currPatternKey[j] == mockyList.param) {
+				return 5; // we see a [_] or a [$]
+			}
+			
+			// we assume that the input is going to be same or longer than pattern key
+			// while j is within range, otherwise, we can get undefined === undefined
+			while (j < currPatternKey.length && (currPatternKey[j] === n[j] || 
+				currPatternKey[j] == mockyList.any || currPatternKey[j] == mockyList.param)) {
+					
+				if (currPatternKey[j] != n[j]) {
+					if (j+1 == currPatternKey.length) return 5; // return now because all is matched
+				}
+	
+				j++;
+			}
+
+			// exact match found
+			if (currPatternKey.length == j && n.length == j) {
+				return 1;
+			}
+			
 		}
-		else {
-			return v;
-		}
+		return null;
 	}
 	
 	
