@@ -90,8 +90,72 @@ foo n = n + 2
 <p>But Mocky validates against having both a <code>mocky.any</code> and <code>mocky.param</code> in an instance and this would actually throw an error.</p>
 
 <ul>
-<li>You can also use Mocky to pattern match arrays. </li>
-</ul><h3>
+<li>You can also use Mocky to pattern match arrays. 
+
+<ul>
+<li>You can pattern match on exact array patterns. </li>
+<li>You can use <code>mocky.any</code> to represent any amount of information if <strong>it is placed at the beginning and/or the end</strong>.</li>
+<li>Likewise, a <code>mocky.param</code> at the beginning or end of the pattern represents any amount of information</li>
+<li>On the other hand, any <code>mocky.any</code> or <code>mocky.param</code> in the middle of the array represents one element in the array.</li>
+</ul>
+</li>
+</ul><pre><code>// matches exactly ["a","b","c","d"]
+var pattern1 = [["a","b","c","d"], 55] 
+
+// matches an array of anything, but doesn't keep the content inside
+var pattern2 = [[_], 55] 
+
+// matches an array of anything, and passes the content to function  
+var pattern3 = [[$], function(n){}]
+
+// matches an array of anything, and passes the content to 6
+// but since 6 isn't function, content is discarded
+var pattern4 = [[$], 6]
+
+// matches to an array whose content begins with "a"
+var pattern5 = [["a",_], 6] 
+
+// matches to an array whose content begins with "a"
+// the array has at least 3 elements, the second param.any matches to 
+// the second element only and the third param.any matches the rest
+var pattern6 = [["a",_,_], 6] 
+
+// matches to an array of length 4 beginning with "a" and ending with "c"
+var pattern7 =  [["a",_,_,"c"], 6]
+
+// matches to an array of length at least 4 beginning with anything
+// followed by "b", an anything and ending with "c"
+var pattern8 =  [[_,"b",_,"c"], 6]  
+
+// matches to an array of length at least 4 beginning with anything
+// followed by "b", an anything and ending with "c"
+// passes all the content up to "b" into foo
+var pattern9 =  [[$,"b",_,"c"], function foo(n){}]  
+
+// matches to an array of length at least 4 beginning with anything
+// followed by "b", an anything and ending with "c"
+// passes the content between "b" and "c" into foo
+var pattern10 =  [[_,"b",$,"c"], function foo(n){}]  
+
+// matches to an array of length at least 4 beginning with anything
+// followed by "b", an anything and ending with "c"
+// passes the content up to "c" into foo (everything except the last)
+var pattern11 =  [[$,"c"], function foo(n){}]  
+
+// matches to an array whose content begins with "a"
+// the array has at least 3 elements, the second param.any matches to 
+// the second element only and the third param.any matches the rest
+// passes everything starting from the third element into foo
+var pattern12 = [["a",_,$], function foo(n){}] 
+
+// matches to an array whose content begins with "a"
+// the array has at least 3 elements, the second param.any matches to 
+// the second element only and the third param.any matches the rest
+// passes the second element into foo 
+var pattern13 = [["a",$,_], function foo(n){}] 
+</code></pre>
+
+<h3>
 <a name="additional-notes" class="anchor" href="#additional-notes"><span class="octicon octicon-link"></span></a>Additional Notes:</h3>
 
 <ul>
