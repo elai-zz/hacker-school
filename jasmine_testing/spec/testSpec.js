@@ -1,5 +1,5 @@
-var _ = mockyList.any;
-var $ = mockyList.param;
+var _ = mocky.any;
+var $ = mocky.param;
 
 function foo() {
 	alert('hi');
@@ -9,7 +9,7 @@ function foo1() {
 	return 1;
 }
 
-var c = mockyList(
+var c = mocky(
 	[2,3], 
 	[1,2],
 	[3 , function() {
@@ -19,7 +19,7 @@ var c = mockyList(
 	[_, "wow!"]
 );
 
-var d = mockyList(
+var d = mocky(
 	[$, function(n) {
 	return n+n}]);
 
@@ -66,68 +66,68 @@ describe("Calling c('apple')", function() {
 
 describe("Calling arrayMatch", function() {
     it("should return null", function() {
-        expect(mockyList.arrayMatch(["a","b","c"],[])).toEqual(null);
+        expect(mocky.arrayMatch(["a","b","c"],[])).toEqual(null);
 	});
 });
 
 describe("Calling arrayMatch", function() {
     it("should return 2", function() {
-        expect(mockyList.arrayMatch(["a","b","c"], [{"k": ["a","b","c"], "v": 2}, {"k": ["a","b","d"], "v": 3}])).toEqual(2);
+        expect(mocky.arrayMatch(["a","b","c"], [{"k": ["a","b","c"], "v": 2}, {"k": ["a","b","d"], "v": 3}])).toEqual(2);
 	});
 });
 
 describe("Calling arrayMatch", function() {
     it("should return 2", function() {
-        expect(mockyList.arrayMatch(["a","b","c"], [{"k": ["a","b","d"], "v": 3},{"k": ["a","b","c"], "v": 2},])).toEqual(2);
+        expect(mocky.arrayMatch(["a","b","c"], [{"k": ["a","b","d"], "v": 3},{"k": ["a","b","c"], "v": 2},])).toEqual(2);
 	});
 });
 
 describe("Calling arrayMatch", function() {
     it("should return 2", function() {
-        expect(mockyList.arrayMatch([], [{"k": [], "v": 2},{"k": ["a","b","c"], "v": 88},])).toEqual(2);
+        expect(mocky.arrayMatch([], [{"k": [], "v": 2},{"k": ["a","b","c"], "v": 88},])).toEqual(2);
 	});
 });
 
 describe("Calling arrayMatch", function() {
     it("should return null", function() {
-        expect(mockyList.arrayMatch([], [{"k": ["a","b","c"], "v": 88},])).toEqual(null);
+        expect(mocky.arrayMatch([], [{"k": ["a","b","c"], "v": 88},])).toEqual(null);
 	});
 });
 
 describe("Calling arrayMatch", function() {
     it("should return null", function() {
-        expect(mockyList.arrayMatch(["a","b","c"], [{"k": ["a","b","d"], "v": 3}])).toEqual(null);
+        expect(mocky.arrayMatch(["a","b","c"], [{"k": ["a","b","d"], "v": 3}])).toEqual(null);
 	});
 });
 
 describe("Calling arrayMatch", function() {
     it("should return 3", function() {
-        expect(mockyList.arrayMatch(["a","b","c"], [{"k": [_], "v": 3}])).toEqual(3);
+        expect(mocky.arrayMatch(["a","b","c"], [{"k": [_], "v": 3}])).toEqual(3);
 	});
 });
 
 
 describe("Calling arrayMatch", function() {
  	it("should return 4", function() {
-     	expect(mockyList.arrayMatch(["a","b","d","c"], [{"k": [_], "v": 4}, {"k": ["a","b","b","c"], "v": 3}])).toEqual(4);
+     	expect(mocky.arrayMatch(["a","b","d","c"], [{"k": [_], "v": 4}, {"k": ["a","b","b","c"], "v": 3}])).toEqual(4);
  	});
 });
 
 describe("Calling arrayMatch with two any's at beginning", function() {
  	it("should return 4", function() {
-     	expect(mockyList.arrayMatch(["a","b","d","c"], [{"k": [_, "d","c"], "v": 4}])).toEqual(4);
+     	expect(mocky.arrayMatch(["a","b","d","c"], [{"k": [_, "d","c"], "v": 4}])).toEqual(4);
  	});
 });
 
 describe("Calling arrayMatch with one any's at beginning", function() {
  	it("should return 4", function() {
-     	expect(mockyList.arrayMatch(["a","b","d","c"], [{"k": [_, "c"], "v": 4}])).toEqual(4);
+     	expect(mocky.arrayMatch(["a","b","d","c"], [{"k": [_, "c"], "v": 4}])).toEqual(4);
  	});
 });
 
 describe("Calling arrayMatch with one any's at beginning", function() {
  	it("should return bee", function() {
-     	expect(mockyList.arrayMatch(["a","b","d","d","e"], [{"k": [_, "c"], "v": "busy bee"},{"k": [_, "d", _], "v": "bee"}])).toEqual("bee");
+     	expect(mocky.arrayMatch(["a","b","d","d","e"], [{"k": [_, "c"], "v": "busy bee"},{"k": [_, "d", _], "v": "bee"}])).toEqual("bee");
  	});
 }); 
 
@@ -135,25 +135,25 @@ describe("Calling arrayMatch with one any's at beginning", function() {
 
 describe("Calling arrayMatch with mixed param and any", function() {
  	it("should return 3", function() {
-     	expect(mockyList.arrayMatch(["a","b","d","d","e"], [{"k": ["c", _], "v": 4},{"k": [$, "d", _], "v": 3}])).toEqual(3);
+     	expect(mocky.arrayMatch(["a","b","d","d","e"], [{"k": ["c", _], "v": 4},{"k": [$, "d", _], "v": 3}])).toEqual(3);
  	});
 }); 
 
 describe("Calling arrayMatch with mixed param and any", function() {
  	it("should return 4", function() {
-     	expect(mockyList.arrayMatch(["a","b","d","d","e"], [{"k": [_,"c",_], "v": 2},{"k": [_, "d", $], "v": 4}])).toEqual(4);
+     	expect(mocky.arrayMatch(["a","b","d","d","e"], [{"k": [_,"c",_], "v": 2},{"k": [_, "d", $], "v": 4}])).toEqual(4);
  	});
 }); 
 
 describe("Calling arrayMatch with mixed param and any", function() {
  	it("should return 4", function() {
-     	expect(mockyList.arrayMatch(["a","b","d","d","e"], [{"k": [_,"e", _, _], "v": 2},{"k": [_, "d", $], "v": 4}])).toEqual(4);
+     	expect(mocky.arrayMatch(["a","b","d","d","e"], [{"k": [_,"e", _, _], "v": 2},{"k": [_, "d", $], "v": 4}])).toEqual(4);
  	});
 }); 
 
 describe("Calling arrayMatch with mixed param and any", function() {
  	it("should return 4", function() {
-     	expect(mockyList.arrayMatch(["a","b","d","d","e"], [{"k": [_,"e", $], "v": 2},{"k": [_, "d", $], "v": 4}])).toEqual(4);
+     	expect(mocky.arrayMatch(["a","b","d","d","e"], [{"k": [_,"e", $], "v": 2},{"k": [_, "d", $], "v": 4}])).toEqual(4);
  	});
 }); 
 
@@ -162,7 +162,7 @@ describe("Calling arrayMatch with mixed param and any", function() {
 // unit tests now using functions
 describe("Calling arrayMatch", function() {
     it("should return 4", function() {
-        expect(mockyList.arrayMatch(["a","b","c"], [
+        expect(mocky.arrayMatch(["a","b","c"], [
 		{"k": ["a","b","d"], "v": 2},
 		{"k": ["a","b","c"], "v": function() {
 			var v = 1+1;
@@ -172,7 +172,7 @@ describe("Calling arrayMatch", function() {
 
 describe("Calling arrayMatch", function() {
     it("should return 2", function() {
-        expect(mockyList.arrayMatch(["a","b","c"], [
+        expect(mocky.arrayMatch(["a","b","c"], [
 		{"k": ["a","c","d"], "v": 3},
 		{"k": ["a", $], "v": function(n) {
 			return n.length;}}])).toEqual(2);
@@ -181,7 +181,7 @@ describe("Calling arrayMatch", function() {
 
 describe("Calling arrayMatch", function() {
     it("should return 1", function() {
-        expect(mockyList.arrayMatch(["a","b","c"], [
+        expect(mocky.arrayMatch(["a","b","c"], [
 		{"k": ["a","c","d"], "v": 3},
 		{"k": [_,"b", $], "v": function(n) {
 			return n.length;}}])).toEqual(1);
