@@ -44,9 +44,9 @@
 <ul>
 <li>Make a new Mocky object and load object with patterns. For <code>anObj</code> (below), if you call <code>anObj(2)</code>, you'll get <code>3</code>. If you call <code>anObj(3)</code>, you'll invoke the anonymous function that would call some function <code>foo()</code> and return <code>"b1"</code> as a result from <code>"b" + 1</code>. </li>
 </ul><pre><code>var anObj = mocky(
-    [2,3], 
-    [1,2],
-    [3 , function() {
+    [2, 3], 
+    [1, 2],
+    [3, function() {
         a = foo();
         return "b" + 1}],
     ["apple", function (n) { return "I like " + n}],
@@ -58,8 +58,8 @@
 <ul>
 <li>You can use Mocky to perform recursion.</li>
 </ul><pre><code>var fact = mocky(
-       [0 : 1],
-       [$ : function(n) {return n * fact(n-1)}]
+       [0, 1],
+       [$, function(n) {return n * fact(n-1)}]
 );
 
 fact(3) // returns 6
@@ -80,8 +80,8 @@ foo n = n + 2
 <p>We would represent this in Mocky as such:</p>
 
 <pre><code>var foo = mocky(
-       [_ : 1],
-       [$ : function(n) {return n+2;}]
+       [_, 1],
+       [$, function(n) {return n+2;}]
 );
 </code></pre>
 
