@@ -31,7 +31,7 @@
         <h3>
 <a name="this-is-mocky" class="anchor" href="#this-is-mocky"><span class="octicon octicon-link"></span></a>This is Mocky.</h3>
 
-<p>Mocky is a small JavaScript library with no dependencies. Mocky allows you to accomplish pattern matching found in functional programming languages such as ML, Haskell, Erlang, and OCaml in JavaScript. Currently, Mocky is capable of pattern matching with one parameter (see below examples). There are plans in the future to expand, or feel free to contribute. Mocky uses Jasmine testing framework and another library similar to Mocky is <a href="https://github.com/bramstein/funcy">Funcy</a>.</p>
+<p>Mocky is a small JavaScript library with no external dependencies. Mocky allows you to accomplish pattern matching found in functional programming languages such as ML, Haskell, Erlang, and OCaml in JavaScript. Currently, Mocky is capable of pattern matching with one parameter (see below examples). There are plans in the future to expand, or feel free to contribute. Mocky was tested using the Jasmine testing framework and draws inspiration from another library similar to Mocky, <a href="https://github.com/bramstein/funcy">Funcy</a>.</p>
 
 <h3>
 <a name="how-to-use" class="anchor" href="#how-to-use"><span class="octicon octicon-link"></span></a>How to use?</h3>
@@ -41,28 +41,70 @@
 <h3>
 <a name="examples" class="anchor" href="#examples"><span class="octicon octicon-link"></span></a>Examples</h3>
 
-<ol>
-<li>Make a new Mocky object and load object with patterns. For anObj (below), if you call anObj(2), you'll get 3. If you call anObj(3), you'll invoke the anonymous function that would call some function foo() and return "b1" as a result from "b" + 1. </li>
-</ol><pre><code>var anObj = mocky(
+<ul>
+<li>Make a new Mocky object and load object with patterns. For <code>anObj</code> (below), if you call <code>anObj(2)</code>, you'll get <code>3</code>. If you call <code>anObj(3)</code>, you'll invoke the anonymous function that would call some function <code>foo()</code> and return <code>"b1"</code> as a result from <code>"b" + 1</code>. </li>
+</ul><pre><code>var anObj = mocky(
     [2,3], 
     [1,2],
     [3 , function() {
         a = foo();
         return "b" + 1}],
     ["apple", function (n) { return "I like " + n}],
+        [["a","b","c"],1],
     [_, "wow!"]
 );
 </code></pre>
 
-<h3>
-<a name="authors-and-contributors" class="anchor" href="#authors-and-contributors"><span class="octicon octicon-link"></span></a>Authors and Contributors</h3>
+<ul>
+<li>You can use Mocky to perform recursion.</li>
+</ul><pre><code>var fact = mocky(
+       [0 : 1],
+       [$ : function(n) {return n * fact(n-1)}]
+);
 
-<p>You can <a href="https://github.com/blog/821" class="user-mention">@mention</a> a GitHub username to generate a link to their profile. The resulting <code>&lt;a&gt;</code> element will link to the contributor's GitHub Profile. For example: In 2007, Chris Wanstrath (<a href="https://github.com/defunkt" class="user-mention">@defunkt</a>), PJ Hyett (<a href="https://github.com/pjhyett" class="user-mention">@pjhyett</a>), and Tom Preston-Werner (<a href="https://github.com/mojombo" class="user-mention">@mojombo</a>) founded GitHub.</p>
+fact(3) // returns 6
+</code></pre>
 
-<h3>
-<a name="support-or-contact" class="anchor" href="#support-or-contact"><span class="octicon octicon-link"></span></a>Support or Contact</h3>
+<ul>
+<li>You can use a wildcard character and a param character depending on what you want to do. Like Funcy, Mocky allows you to define your own wildcard and param character. In the example, <code>_</code> and <code>$</code> were used, respectively. </li>
+</ul><pre><code>var _ = mocky.any;
+var $ = mocky.param;
+</code></pre>
 
-<p>Having trouble with Pages? Check out the documentation at <a href="http://help.github.com/pages">http://help.github.com/pages</a> or contact <a href="mailto:support@github.com">support@github.com</a> and we’ll help you sort it out.</p>
+<p>To illustrate how these work, refer to the analogy below. If we have in Haskell (we shouldn't because the patterns overlap):</p>
+
+<pre><code>foo _ = 1
+foo n = n + 2
+</code></pre>
+
+<p>We would represent this in Mocky as such:</p>
+
+<pre><code>var foo = mocky(
+       [_ : 1],
+       [$ : function(n) {return n+2;}]
+);
+</code></pre>
+
+<p>But Mocky validates against having both <code>_</code> and <code>$</code> in an instance and this would actually throw an error.</p>
+
+<ul>
+<li>You can also use Mocky to pattern match arrays. </li>
+</ul><h3>
+<a name="additional-notes" class="anchor" href="#additional-notes"><span class="octicon octicon-link"></span></a>Additional Notes:</h3>
+
+<ul>
+<li>Mocky will match an input to the first available pattern, so the order of your patterns matter. </li>
+</ul><p>This will always return 1 because the wildcard is matched with all inputs.</p>
+
+<pre><code>var bar = mocky(
+       [_ , 1],
+       ["a" , //doSomething]
+);
+</code></pre>
+
+<ul>
+<li>At this point, Mocky only takes one parameter. A pattern with multiple <code>$</code> is not accepted.</li>
+</ul>
       </section>
       <footer>
         <p>This project is maintained by <a href="https://github.com/elai">elai</a></p>
