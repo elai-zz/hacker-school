@@ -1,13 +1,3 @@
-To Do:
+README
 
-Support more complicated cases of matching
-	Any
-	Arrays
-		[1, mocky.param] : 4, // matches [1:t]
-		[h, t] : 3
-		[] : 0
-		[_] : 1
-	Multiple 
-	Type
-	
-Reorg structure
+Refer to elai.github.io/mocky for more info.

@@ -23,6 +23,9 @@ var d = mockyList(
 	[$, function(n) {
 	return n+n}]);
 
+
+	/*
+// unit tests with just one parameter
 describe("calling d(66)", function() {
     it("param token", function() {
         expect(d(66)).toEqual(132);
@@ -59,7 +62,7 @@ describe("Calling c('apple')", function() {
 	});
 }); 
 
-// unit test for arrayMatch
+// unit test for arrayMatch, not passing functions.
 
 describe("Calling arrayMatch", function() {
     it("should return null", function() {
@@ -123,8 +126,8 @@ describe("Calling arrayMatch with one any's at beginning", function() {
 });
 
 describe("Calling arrayMatch with one any's at beginning", function() {
- 	it("should return busy bee", function() {
-     	expect(mockyList.arrayMatch(["a","b","d","d","e"], [{"k": [_, "c"], "v": "busy bee"},{"k": [_, "d", _], "v": "bee"}])).toEqual("busy bee");
+ 	it("should return bee", function() {
+     	expect(mockyList.arrayMatch(["a","b","d","d","e"], [{"k": [_, "c"], "v": "busy bee"},{"k": [_, "d", _], "v": "bee"}])).toEqual("bee");
  	});
 }); 
 
@@ -136,11 +139,54 @@ describe("Calling arrayMatch with mixed param and any", function() {
  	});
 }); 
 
-// why is this one having trouble?
-// describe("Calling arrayMatch with mixed param and any", function() {
-//  	it("should return 4", function() {
-//      	expect(mockyList.arrayMatch(["a","b","d","d","e"], [{"k": [_,"c",_], "v": 2},{"k": [_, "d", $], "v": 4}])).toEqual(4);
-//  	});
-// }); 
+describe("Calling arrayMatch with mixed param and any", function() {
+ 	it("should return 4", function() {
+     	expect(mockyList.arrayMatch(["a","b","d","d","e"], [{"k": [_,"c",_], "v": 2},{"k": [_, "d", $], "v": 4}])).toEqual(4);
+ 	});
+}); 
+
+describe("Calling arrayMatch with mixed param and any", function() {
+ 	it("should return 4", function() {
+     	expect(mockyList.arrayMatch(["a","b","d","d","e"], [{"k": [_,"e", _, _], "v": 2},{"k": [_, "d", $], "v": 4}])).toEqual(4);
+ 	});
+}); 
+
+describe("Calling arrayMatch with mixed param and any", function() {
+ 	it("should return 4", function() {
+     	expect(mockyList.arrayMatch(["a","b","d","d","e"], [{"k": [_,"e", $], "v": 2},{"k": [_, "d", $], "v": 4}])).toEqual(4);
+ 	});
+}); 
+
+*/
+	
+// unit tests now using functions
+describe("Calling arrayMatch", function() {
+    it("should return 4", function() {
+        expect(mockyList.arrayMatch(["a","b","c"], [
+		{"k": ["a","b","d"], "v": 2},
+		{"k": ["a","b","c"], "v": function() {
+			var v = 1+1;
+			return v+2;}}])).toEqual(4);
+	});
+});
+
+describe("Calling arrayMatch", function() {
+    it("should return 2", function() {
+        expect(mockyList.arrayMatch(["a","b","c"], [
+		{"k": ["a","c","d"], "v": 3},
+		{"k": ["a", $], "v": function(n) {
+			return n.length;}}])).toEqual(2);
+	});
+});
+
+describe("Calling arrayMatch", function() {
+    it("should return 1", function() {
+        expect(mockyList.arrayMatch(["a","b","c"], [
+		{"k": ["a","c","d"], "v": 3},
+		{"k": [_,"b", $], "v": function(n) {
+			return n.length;}}])).toEqual(1);
+	});
+});
+
 
 
