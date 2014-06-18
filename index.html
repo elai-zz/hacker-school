@@ -101,54 +101,67 @@ foo n = n + 2
 </li>
 </ul><pre><code>// matches exactly ["a","b","c","d"]
 var pattern1 = [["a","b","c","d"], 55] 
+</code></pre>
 
-// matches an array of anything, but doesn't keep the content inside
+<pre><code>// matches an array of anything, but doesn't keep the content inside
 var pattern2 = [[_], 55] 
+</code></pre>
 
-// matches an array of anything, and passes the content to function  
+<pre><code>// matches an array of anything, and passes the content to function  
 var pattern3 = [[$], function(n){}]
+</code></pre>
 
-// matches an array of anything, and passes the content to 6
+<pre><code>// matches an array of anything, and passes the content to 6
 // but since 6 isn't function, content is discarded
 var pattern4 = [[$], 6]
+</code></pre>
 
-// matches to an array whose content begins with "a"
+<pre><code>// matches to an array whose content begins with "a"
 var pattern5 = [["a",_], 6] 
+</code></pre>
 
-// matches to an array whose content begins with "a"
+<pre><code>// matches to an array whose content begins with "a"
 // the array has at least 3 elements, the second param.any matches to 
 // the second element only and the third param.any matches the rest
 var pattern6 = [["a",_,_], 6] 
+</code></pre>
 
-// matches to an array of length 4 beginning with "a" and ending with "c"
+<pre><code>// matches to an array of length 4 beginning with "a" 
+// and ending with "c"
 var pattern7 =  [["a",_,_,"c"], 6]
+</code></pre>
 
-// matches to an array of length at least 4 beginning with anything
+<pre><code>// matches to an array of length at least 4 beginning with anything
 // followed by "b", an anything and ending with "c"
 var pattern8 =  [[_,"b",_,"c"], 6]  
+</code></pre>
 
-// matches to an array of length at least 4 beginning with anything
+<pre><code>// matches to an array of length at least 4 beginning with anything
 // followed by "b", an anything and ending with "c"
 // passes all the content up to "b" into foo
 var pattern9 =  [[$,"b",_,"c"], function foo(n){}]  
+</code></pre>
 
-// matches to an array of length at least 4 beginning with anything
+<pre><code>// matches to an array of length at least 4 beginning with anything
 // followed by "b", an anything and ending with "c"
 // passes the content between "b" and "c" into foo
 var pattern10 =  [[_,"b",$,"c"], function foo(n){}]  
+</code></pre>
 
-// matches to an array of length at least 4 beginning with anything
+<pre><code>// matches to an array of length at least 4 beginning with anything
 // followed by "b", an anything and ending with "c"
 // passes the content up to "c" into foo (everything except the last)
 var pattern11 =  [[$,"c"], function foo(n){}]  
+</code></pre>
 
-// matches to an array whose content begins with "a"
+<pre><code>// matches to an array whose content begins with "a"
 // the array has at least 3 elements, the second param.any matches to 
 // the second element only and the third param.any matches the rest
 // passes everything starting from the third element into foo
 var pattern12 = [["a",_,$], function foo(n){}] 
+</code></pre>
 
-// matches to an array whose content begins with "a"
+<pre><code>// matches to an array whose content begins with "a"
 // the array has at least 3 elements, the second param.any matches to 
 // the second element only and the third param.any matches the rest
 // passes the second element into foo 
