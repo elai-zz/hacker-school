@@ -30,23 +30,22 @@
 					anyPattern = patterns[i][1];
 				}
 				
-				else {
-					if (patterns[i][0] == mocky.param) {
-						paramExist = patterns[i][1];
-					}
-					newObj = {"k": patterns[i][0], "v" : patterns[i][1]};		
-					patternsL.push(newObj); 	
-				}		
+				else if (patterns[i][0] == mocky.param) {
+					paramExist = patterns[i][1];
+				}
+				newObj = {"k": patterns[i][0], "v" : patterns[i][1]};		
+				patternsL.push(newObj); 	
+						
 			}
-			
+
 			if (anyPattern && paramExist) {
 				throw "ambiguous pattern any and param";
 			}
 			
 			/* now breaking it up to different cases */
 			
-			if (n.isArray) {
-				arrayMatch(n, patternsL);
+			if (n instanceof Array) {
+				return arrayMatch(n, patternsL);
 			}
 			
 			else {
@@ -97,6 +96,7 @@
 	}
 	function arrayMatch(n, p) {
 		for (var i = 0; i < p.length; i++) {
+			console.log("wow");
 			var currPatternKey = p[i]["k"];
 			var currPatternVal = p[i]["v"];
 			var j = 0;
@@ -106,7 +106,7 @@
 			var copyN = n; 
 			
 			// in case we see a param char
-			var paramMatch;
+			var paramMatch = undefined;
 			
 			if (currPatternKey[j] == mocky.any || 
 				currPatternKey[j] == mocky.param) {
@@ -121,6 +121,14 @@
 					// we are seeing something like [$,_]
 					if (currPatternKey[1] == mocky.any) {
 						return returnFuncOrAtom(currPatternVal, n[1]);
+					}
+					
+					else {
+						var nextToken = currPatternKey[1]; 
+						var ind = n.indexOf(nextToken);
+						paramMatch = n.slice(0,ind);
+						currPatternKey = currPatternKey.slice(1);
+						n = n.slice(ind);
 					}
 					
 				}
@@ -179,31 +187,45 @@
 			while (j < currPatternKey.length && (currPatternKey[j] === n[j] || 
 				currPatternKey[j] == mocky.any || 
 				currPatternKey[j] == mocky.param)) {
-				
+	
 				if (currPatternKey[j] == mocky.param) {
-					// as soon as we see a param, we can stop and match. 
-					paramMatch = n.slice(j);
-					return returnFuncOrAtom(currPatternVal, paramMatch);
+					// as soon as we see a param, we need to see whether it's still going. 
+					// we haven't seen a param at this point yet
+					paramMatch = [n[j]];
+					//return FuncOrAtom(currPatternVal, paramMatch);
 				}
 					
 				else if (currPatternKey[j] == mocky.any) {
-					if (j+1 == currPatternKey.length) {
+					// we have seen a param before this so we should return it
+					if (paramMatch) {
+						return returnFuncOrAtom(currPatternVal, paramMatch);
+					}
+					else if (j+1 == currPatternKey.length) {
 						return returnFuncOrAtom(currPatternVal, n);
 					} // return now because all is matched
 				}
-	
+
+
 				j++;
 			}
-
+			
+			// a param is matched it's at the end
+			// some stuff at the end of n is unseen
+			if (paramMatch && (currPatternKey.length < n.length)) {
+				return returnFuncOrAtom(currPatternVal,
+					 paramMatch.concat(n.slice(j)));
+			}
 			// exact match found
-			if (currPatternKey.length == j && n.length == j) {
-				return returnFuncOrAtom(currPatternVal, n);
+			else if (currPatternKey.length == j && n.length == j) {
+				if (paramMatch) {
+					return returnFuncOrAtom(currPatternVal, paramMatch);
+				}
+				else return returnFuncOrAtom(currPatternVal, n);
 			}
 			
 			n = copyN;
 			
 		}
-		mocky
 		throw "non exhaustive pattern matching";
 	}
 	

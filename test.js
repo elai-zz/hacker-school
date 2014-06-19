@@ -29,6 +29,4 @@ var fact = mocky({
 	0 : 1,
 	"$" : function(n) {return n * fact(n-1)}
 });
-
-
 console.log(fact(3));
