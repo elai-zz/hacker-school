@@ -30,7 +30,13 @@ var fact = mocky(
 	[$ , function(n) {return n * fact(n-1)}]
 );
 
-/*
+var e = mocky(
+	[[1, _, 3] , "a list begins with 1 and ends with 3."],
+	[[$,1,2,3,"a"],function(boo){return boo;}], 
+	[[_], "a list that I don't understand."]
+);
+
+
 describe("Calling fact", function() {
     it("should return 24", function() {
         expect(fact(4)).toEqual(24);
@@ -218,11 +224,10 @@ describe("Calling arrayMatch", function() {
     it("should return 3", function() {
         expect(mocky.arrayMatch(["a","b","c","e"], [{"k": [_,"b","c",_], "v": 3},{"k": ["a","b","c"], "v": 2},])).toEqual(3);
 	});
-}); */
+}); 
 
 // tests to care about
-
-
+/*
 describe("Calling arrayMatch", function() {
     it("should return 3", function() {
         expect(mocky.arrayMatch(["a","b","c","e"], [{"k": ["a",$,"c",_], "v": function foo(n){return n;}},{"k": ["a","b","c"], "v": 2},])).toEqual(["b"]);
@@ -254,5 +259,10 @@ describe("Calling arrayMatch", function() {
 	});
 });
 
+describe("Calling arrayMatch", function() {
+    it("should go to the wildcard case", function() {
+        expect(e([1, 2, 'cat', 'elephant', 3])).toEqual("a list that I don't understand.");
+	});
+});*/
 
 

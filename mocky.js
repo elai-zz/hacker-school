@@ -96,7 +96,6 @@
 	}
 	function arrayMatch(n, p) {
 		for (var i = 0; i < p.length; i++) {
-			console.log("wow");
 			var currPatternKey = p[i]["k"];
 			var currPatternVal = p[i]["v"];
 			var j = 0;
@@ -187,12 +186,17 @@
 			while (j < currPatternKey.length && (currPatternKey[j] === n[j] || 
 				currPatternKey[j] == mocky.any || 
 				currPatternKey[j] == mocky.param)) {
-	
+					
 				if (currPatternKey[j] == mocky.param) {
 					// as soon as we see a param, we need to see whether it's still going. 
 					// we haven't seen a param at this point yet
 					paramMatch = [n[j]];
-					//return FuncOrAtom(currPatternVal, paramMatch);
+					
+					// $ is at the end now, so we can just return with 
+					// everything unseen in input as $
+					if (j+1 == currPatternKey.length) {
+						return returnFuncOrAtom(currPatternVal, n.slice(j));
+					}
 				}
 					
 				else if (currPatternKey[j] == mocky.any) {
@@ -205,18 +209,11 @@
 					} // return now because all is matched
 				}
 
-
 				j++;
 			}
 			
-			// a param is matched it's at the end
-			// some stuff at the end of n is unseen
-			if (paramMatch && (currPatternKey.length < n.length)) {
-				return returnFuncOrAtom(currPatternVal,
-					 paramMatch.concat(n.slice(j)));
-			}
 			// exact match found
-			else if (currPatternKey.length == j && n.length == j) {
+			if (currPatternKey.length == j && n.length == j) {
 				if (paramMatch) {
 					return returnFuncOrAtom(currPatternVal, paramMatch);
 				}
