@@ -1,10 +1,6 @@
 var _ = mocky.any;
 var $ = mocky.param;
 
-function foo() {
-	alert('hi');
-}
-
 function writeOut(call, res) {
 	
 	var string = call + " gives you " + res;
@@ -37,12 +33,14 @@ var fib = mocky(
 	[$ , function(n) {return fib(n-1) + fib (n-2)}]
 );
 
-// writeOut("c(2)", c(2));
-// writeOut("c('apple')", c("apple"));
-// writeOut("c('foobar')", c("foobar!"));
-// writeOut("fact(3)", fact(3));
-// writeOut("fib(10)", fib(10)); // starting 0, 1, 1, 2, 3 ...
-// writeOut("d(['bear', 'dog'])", d(['bear', 'dog']) );
-// writeOut("d(['bear', 'dog', 1, 2, 3, 'a'])", d(['bear', 'dog',1, 2, 3, 'a']) );
-// writeOut("d([1, 2, 'cat', 'elephant', 3])", d([1, 2, 'cat', 'elephant', 3]) );
-// writeOut("d([1, 'cat', 3])", d([1, 'cat', 3]) );
+writeOut("c(2)", c(2));
+writeOut("c('apple')", c("apple"));
+writeOut("c('foobar')", c("foobar!"));
+
+writeOut("fact(3)", fact(3));
+writeOut("fib(10)", fib(10)); // starting 0, 1, 1, 2, 3 ...
+
+writeOut("d(['bear', 'dog'])", d(['bear', 'dog']) );
+writeOut("d(['bear', 'dog', 1, 2, 3, 'a'])", d(['bear', 'dog',1, 2, 3, 'a']) );
+writeOut("d([1, 2, 'cat', 'elephant', 3])", d([1, 2, 'cat', 'elephant', 3]) );
+writeOut("d([1, 'cat', 3])", d([1, 'cat', 3]) );
