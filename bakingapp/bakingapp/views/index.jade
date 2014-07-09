@@ -4,4 +4,7 @@ block content
   h1= title
   p Welcome to #{title}
   if (user)
-    p You are #{user.username}
+    p 
+      | You are #{user.username}
+      | You can logout 
+      a(href='/logout') here

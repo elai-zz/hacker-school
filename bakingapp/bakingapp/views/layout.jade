@@ -2,6 +2,25 @@ doctype html
 html
   head
     title= title
+    link(rel='stylesheet', href='/stylesheets/bootstrap.min.css')
     link(rel='stylesheet', href='/stylesheets/style.css')
+
+    script(src="http://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js")
+    script(src="./js/bootstrap.min.js")
+    script(src='http://documentcloud.github.com/underscore/underscore.js')
+    script(src='http://documentcloud.github.com/backbone/backbone.js')
+    script(src="./js/main.js")
+
+    // template for an individual item
+
+    script#item_template(type="text/template")
+      p 
+      |  You're looking at a <%= name%>.
+      |  It is made of <%=ingredients%>.   
+
+      a.btn.btn-default.edit(role="button") Edit
+      .divider
+      a.btn.btn-default.remove(role="button") Remove
+
   body
     block content

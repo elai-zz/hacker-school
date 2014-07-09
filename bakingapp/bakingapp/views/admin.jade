@@ -1,4 +1,16 @@
 extends layout
 
 block content
-  h1 You are an admin!
+  h1 Welcome admin!
+  div#desserts
+
+  // modal for editing
+  .modal.fade(id="adminEditModal", role="dialog", tabindex="-1", aria-labelledby="a label", aria-hidden="true")
+    .modal-dialog
+      .modal-content
+        .modal-header
+          button(type="button", class="close", data-dismiss="modal" aria-hidde="true") x
+          h3 Modal Header
+        .modal-body
+          p One fine body...
+        .modal-footer
