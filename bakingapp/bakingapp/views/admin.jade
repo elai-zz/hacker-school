@@ -2,15 +2,25 @@ extends layout
 
 block content
   h1 Welcome admin!
-  div#desserts
+  #desserts
+  #modal
 
   // modal for editing
-  .modal.fade(id="adminEditModal", role="dialog", tabindex="-1", aria-labelledby="a label", aria-hidden="true")
-    .modal-dialog
-      .modal-content
-        .modal-header
-          button(type="button", class="close", data-dismiss="modal" aria-hidde="true") x
-          h3 Modal Header
-        .modal-body
-          p One fine body...
-        .modal-footer
+  script#adminEditModalTemplate(type="text/template")
+    .modal.fade(id="adminEditModal", role="dialog", tabindex="-1", aria-labelledby="a label", aria-hidden="true")
+      .modal-dialog
+        .modal-content
+          .modal-header
+            button(type="button", class="close", data-dismiss="modal" aria-hidde="true") x
+            h3 Edit Baked Good
+          .modal-body
+            p One fine body...
+            form(role="form")
+              .form-group
+                label#name(for="name") Name
+                input.form-control(type="text", id="name", value="<%= name %>")
+              .form-group
+                label#name(for="ingredients") Ingredients
+                input.form-control(type="text", id="ingredients", placeholder='#{ingredients}')  
+
+          .modal-footer

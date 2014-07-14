@@ -12155,6 +12155,8 @@ _.$ = $;
 Backbone.$ = $;
 var loginView = require('../../views/loginView');
 var userHomeView = require('../../views/userHomeView');
+//var adminHomeView = require('../../views/adminHomeView');
+
 
 var Item = Backbone.Model.extend({
   
@@ -12195,25 +12197,29 @@ var Router = Backbone.Router.extend({
   },
 
   home: function () {
-  	// greet person
-      $.ajax({
-        url: "/user",
-        success: function(res) {
-          if (res.username) {
-            var userView = new userHomeView({model:res});
-          }
+    $.ajax({
+      url: "/user",
+      success: function(res) {
 
-          else {
-            var userView = new userHomeView({model:{username:"guest", type: "guest"}});
-          }
-          // if (res.type) == "admin" {
-          //   // show the admin page
-          // }
+        // actually, this person is an admin
+        // if (res.type) == "admin" {
+        //   var adminView = new adminHomeView(res);
+        // }
 
-          $('#content').html(userView.render().el);
+        if (res.username) {
+          var userView = new userHomeView(res);
         }
-      });
-    }
+
+        else {
+          var userView = new userHomeView({username:"guest", type: "guest"});
+        }
+
+        $('#content').html(userView.render().el);
+      }
+    });
+  }
+
+
 });
 
 
@@ -12238,7 +12244,7 @@ $(document).ready(function () {
 module.exports = function(obj){
 var __t,__p='',__j=Array.prototype.join,print=function(){__p+=__j.call(arguments,'');};
 with(obj||{}){
-__p+='<script type="text/template" id="loginTemplate">\n\t<div class = "login">\n\t\t<form action="/login" method="post">\n\t\t    <div>\n\t\t        <label>Username:</label>\n\t\t        <input type="text" name="username"/>\n\t\t    </div>\n\t\t    <div>\n\t\t        <label>Password:</label>\n\t\t        <input type="password" name="password"/>\n\t\t    </div>\n\t\t    <div>\n\t\t        <input type="submit" value="Log In"/>\n\t\t    </div>\n\t\t</form>\n\t</div>\n</script>';
+__p+='<div class = "login">\n\t<form action="/login" method="post">\n\t    <div>\n\t        <label>Username:</label>\n\t        <input type="text" name="username"/>\n\t    </div>\n\t    <div>\n\t        <label>Password:</label>\n\t        <input type="password" name="password"/>\n\t    </div>\n\t    <div>\n\t        <input type="submit" value="Log In"/>\n\t    </div>\n\t</form>\n</div>\n';
 }
 return __p;
 };
@@ -12247,15 +12253,15 @@ return __p;
 module.exports = function(obj){
 var __t,__p='',__j=Array.prototype.join,print=function(){__p+=__j.call(arguments,'');};
 with(obj||{}){
-__p+='<script type="text/template" id="userHomeTemplate">\n\t<div>\n\t\t';
-if (! username) { 
-__p+='\n\t\t\t<h1> You don\'t have permission to view this page. </h1>\n\t\t';
- } else { 
-__p+='\n\n\t\t\t<h1> Hello '+
+__p+='\n<div>\n\t';
+if (username) { 
+__p+='\n\t\t<h1> Hello '+
 ((__t=( username ))==null?'':__t)+
-'! </h1>\n\t\t';
+'! </h1>\n\t';
+ } else { 
+__p+='\n\t\t<h1> You don\'t have permission to view this page. </h1>\n\n\t';
  } 
-__p+='\n\t</div>\n</script>';
+__p+='\n</div>\n';
 }
 return __p;
 };
@@ -12301,9 +12307,8 @@ _.$ = $;
 var template = require("../templates/userHome.html");
 
 
-var userHomeView = Backbone.View.extend({
+module.exports = Backbone.View.extend({
 
-  template: _.template(template(this.model)),
 
   initialize: function (model) {
   	this.model = model || {};
@@ -12311,12 +12316,11 @@ var userHomeView = Backbone.View.extend({
 
   render: function () {
   	console.log(this.model);
-    //this.$el.html(this.template(this.model.toJSON()));
+    this.$el.html(template(this.model));
     return this;
   } 
 
 });
 
-module.exports = new userHomeView();
 
 },{"../templates/userHome.html":7,"backbone":1,"jquery":3,"underscore":4}]},{},[5])

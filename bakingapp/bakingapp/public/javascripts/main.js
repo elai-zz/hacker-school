@@ -1,10 +1,13 @@
 var $ = require('jquery');
 var Backbone = require('backbone');
 var _ = require('underscore');
+var Marionette = require('backbone.marionette');
 _.$ = $;
 Backbone.$ = $;
 var loginView = require('../../views/loginView');
 var userHomeView = require('../../views/userHomeView');
+//var adminHomeView = require('../../views/adminHomeView');
+
 
 var Item = Backbone.Model.extend({
   
@@ -45,25 +48,29 @@ var Router = Backbone.Router.extend({
   },
 
   home: function () {
-  	// greet person
-      $.ajax({
-        url: "/user",
-        success: function(res) {
-          if (res.username) {
-            var userView = new userHomeView({model:res});
-          }
+    $.ajax({
+      url: "/user",
+      success: function(res) {
 
-          else {
-            var userView = new userHomeView({model:{username:"guest", type: "guest"}});
-          }
-          // if (res.type) == "admin" {
-          //   // show the admin page
-          // }
-
-          $('#content').html(userView.render().el);
+        // actually, this person is an admin
+        if (res.type) == "admin" {
+          var adminView = new adminHomeView(res);
         }
-      });
-    }
+
+        if (res.username) {
+          var userView = new userHomeView(res);
+        }
+
+        else {
+          var userView = new userHomeView({username:"guest", type: "guest"});
+        }
+
+        $('#content').html(userView.render().el);
+      }
+    });
+  }
+
+
 });
 
 

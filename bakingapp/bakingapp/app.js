@@ -9,7 +9,6 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var mongoose = require('mongoose/');
 
-
 var routes = require('./routes/index');
 var users = require('./routes/users');
 
@@ -18,11 +17,15 @@ var LocalStrategy = require('passport-local').Strategy;
 
 
 var app = express();
+var router = express.Router();
 
+// where the HTML files reside
+var htmlDir = './views/'
 
 // view engine setup
-app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'jade');
+app.engine('html', require('ejs').renderFile);
+app.set('views', __dirname + '/');
+app.set('view engine', 'html');
 
 //////////////////////////////////////////////////////////////// db
 mongoose.connect('mongodb://localhost/MyDatabase');
@@ -53,17 +56,18 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded());
 app.use(cookieParser());
 app.use(session({secret: 'keyboard cat'}));
-app.use(express.static(path.join(__dirname, '/public')));
-app.use('/js', express.static(path.join(__dirname, '/js')));
+app.use('/public', express.static(path.join(__dirname, '/public')));
+app.use(express.static(path.join(__dirname, '/views')));
 
 app.use(passport.initialize());
 app.use(passport.session());
 
 // accepting post request for login
 // redirects to homepage on success
+
 app.post('/login',
   passport.authenticate('local', { successRedirect: '/',
-                                   failureRedirect: '/login',
+                                   failureRedirect: '/#login',
                                    failureFlash: true })
 );
 
@@ -79,7 +83,9 @@ function ensureAuthenticatedAdmin(req, res, next) {
 // authentication function 
 passport.use(new LocalStrategy(
   function(username, password, done) {
-    User.findOne({ username: username }, function (err, user) {    
+    console.log(username);
+    User.findOne({ username: username }, function (err, user) {   
+        console.log(user); 
         if (err) {
             return done(err);
         }
@@ -108,15 +114,20 @@ passport.deserializeUser(function(id, done) {
 });
 
 
-//////////////////////////////////////////////////////////////// routes
+//////////////////////////////////////////////////////////////// API calls
 
-// app.options('/items/:id', function(req, res){
-//   res.header('Access-Control-Allow-Origin', '*');
-//   res.header('Access-Control-Allow-Methods', 'DELETE');
-//   res.end();
-// });
+// Get current user
 
-// List items
+app.get('/user', function (req, res, next) {
+  if (req.isAuthenticated()) {
+    return res.send({username: req.user.username, type: req.user.type});
+  }
+  else {
+    return res.send(null);
+  }
+});
+
+//List items
 app.get('/items', function (req, res) {
     Item.find().lean().exec({}, function (err, items) {
       return res.end(JSON.stringify(items));
@@ -133,7 +144,7 @@ app.post('/items', function (req, res) {
 
 });
 
-// Getting an existing item
+//Getting an existing item
 app.get('/items/:id', function (req, res, next) {
   var id = req.params.id;
   return Item.findOne({_id:id}, function (err, item) {
@@ -144,28 +155,34 @@ app.get('/items/:id', function (req, res, next) {
 
 // Removing an item
 
-app.delete('/items', function (req, res, next) {
-  console.log(req);
-  Item.remove({_id:id}, function (err) {
+app.delete('/items/:id', function (req, res, next) {
+  Item.remove({_id:req.params.id}, function (err) {
     if (err) {
-      console.log("booo!");
       return handleError(err);
      }
+    else{
+      res.end("OK", 200);
+    } 
   })
 
 });
 
+
+
+// move to client side
 app.get('/logout', function (req, res) {
   req.logout();
   res.redirect('/');
 });
 
 // Logging in
-app.get('/login', function(req, res) {
-  if (req.isAuthenticated()) {res.redirect('/')}
-  res.render('login');
-});
+// move to client side
+// app.get('/login', function(req, res) {
+//   if (req.isAuthenticated()) {res.redirect('/')}
+//   res.render('login');
+// });
 
+// move to client side
 app.get('/admin', ensureAuthenticatedAdmin, function(req, res) {
     res.render('admin', {user: req.user}); 
 });
@@ -173,16 +190,12 @@ app.get('/admin', ensureAuthenticatedAdmin, function(req, res) {
 
 app.get('/', function(req, res) {
   if (req.isAuthenticated()) {console.log('authenticated');}
-  res.render('index', 
-    { title: 'Express', 
-      user : req.user,
-      scripts: ['./js/main.js', 'jquery.min.js'] 
-    });
+  res.render("index.html", {title: "Baking App"});
 });
 
 
 app.use('/', routes);
-app.use('/users', users);
+// app.use('/users', users);
 
 /// catch 404 and forward to error handler
 app.use(function(req, res, next) {
@@ -214,6 +227,5 @@ app.use(function(err, req, res, next) {
         error: {}
     });
 });
-
 
 module.exports = app;
