@@ -1,4 +1,108 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+var $ = require('jquery');
+var _ = require('underscore');
+var Backbone = require('backbone');
+
+var Item = require('../models/item');
+
+module.exports = Backbone.Collection.extend({
+	  
+	model: Item,
+	url: "/items"
+
+});
+},{"../models/item":3,"backbone":6,"jquery":8,"underscore":9}],2:[function(require,module,exports){
+var $ = require('jquery');
+var _ = require('underscore');
+var Backbone = require('backbone');
+
+var Request = require('../models/request');
+
+
+module.exports = Backbone.Collection.extend({
+	  
+	model: Request,
+	
+	url: "/requests",
+
+	byUser: function(userID) {
+
+	    var gf = this.models.filter(function(model) {
+  			return (model.get("user") === userID);
+  		});
+
+	    return filtered;
+  	},
+
+  	byUserAndModel: function(userId, modelId) {
+  		var gf = this.models.filter(function(model) {
+  			return (
+  				model.get("user") === userId &&
+  				model.get("requestedItem") === modelId
+  			);
+  		});
+  		return gf;
+  	}
+
+});
+},{"../models/request":4,"backbone":6,"jquery":8,"underscore":9}],3:[function(require,module,exports){
+var $ = require('jquery');
+var _ = require('underscore');
+var Backbone = require('backbone');
+
+module.exports = Backbone.Model.extend({
+  
+  defaults: {
+  		"name": "mystery baked good",
+  		"ingredients": "love",
+  		"status": "not started",
+  		"img" : "",
+  		"request" : 0
+    },
+
+  idAttribute: "_id",
+
+  urlRoot: "/items"
+
+});
+},{"backbone":6,"jquery":8,"underscore":9}],4:[function(require,module,exports){
+var $ = require('jquery');
+var _ = require('underscore');
+var Backbone = require('backbone');
+
+module.exports = Backbone.Model.extend({
+  
+  defaults: {
+  		"user": "",
+  		"requestedItem" : ""
+    },
+
+  idAttribute: "_id",
+
+  urlRoot: "/requests"
+
+});
+},{"backbone":6,"jquery":8,"underscore":9}],5:[function(require,module,exports){
+var $ = require('jquery');
+var _ = require('underscore');
+var Backbone = require('backbone');
+
+module.exports = Backbone.Model.extend({
+  
+  defaults: {
+  		"username": "user",
+  		"password": "password",
+  		"type" : "user",
+  		"phone" : "(123) 456-7890",
+  		"email" : "foobar@example.com"
+    },
+
+  idAttribute: "_id",
+
+  urlRoot: "/users"
+
+});
+},{"backbone":6,"jquery":8,"underscore":9}],6:[function(require,module,exports){
 //     Backbone.js 1.1.2
 
 //     (c) 2010-2014 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
@@ -1608,7 +1712,7 @@
 
 }));
 
-},{"underscore":2}],2:[function(require,module,exports){
+},{"underscore":7}],7:[function(require,module,exports){
 //     Underscore.js 1.6.0
 //     http://underscorejs.org
 //     (c) 2009-2014 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
@@ -2953,7 +3057,7 @@
   }
 }).call(this);
 
-},{}],3:[function(require,module,exports){
+},{}],8:[function(require,module,exports){
 /*!
  * jQuery JavaScript Library v2.1.1
  * http://jquery.com/
@@ -12145,55 +12249,59 @@ return jQuery;
 
 }));
 
-},{}],4:[function(require,module,exports){
-module.exports=require(2)
-},{}],5:[function(require,module,exports){
+},{}],9:[function(require,module,exports){
+module.exports=require(7)
+},{}],10:[function(require,module,exports){
 var $ = require('jquery');
 var Backbone = require('backbone');
 var _ = require('underscore');
 _.$ = $;
 Backbone.$ = $;
+var Backbone = require('backbone');
 var loginView = require('../../views/loginView');
 var userHomeView = require('../../views/userHomeView');
-//var adminHomeView = require('../../views/adminHomeView');
-
-
-var Item = Backbone.Model.extend({
-  
-  defaults: {
-  		"name": "mystery baked good",
-  		"ingredients": "love",
-  		"status": "not started",
-  		"img" : "",
-    },
-
-  idAttribute: "_id",
-
-  urlRoot: "/items"
-
-});
-
-var ItemCollection = Backbone.Collection.extend({
-	  
-	model: Item,
-	url: "/items"
-
-});
-
+var adminHomeView = require('../../views/adminHomeView');
+var guestHomeView = require('../../views/guestHomeView');
+var requestView = require('../../views/requestView');
+var userProfileView = require('../../views/userProfileView');
 
 var Router = Backbone.Router.extend({
 
-  initialize: function () {
-  	console.log('hello im here');
-  },
-
   routes: {
     "login": "login",  
-    "" : "home"
+    "" : "home",
+    "home": "home",
+    "register" : "register",
+    "update_profile" : "updateProfile",
+    "addNewBakedGood": "addNewBakedGood",
+    "requests": "requests"
   },
 
   login: function () {
-  	$('#content').html(loginView.render().el);
+    var login = new loginView();
+    $('#content').html(login.render().el);
+  },
+
+  register : function () {
+    var newRegister = new userProfileView();
+    $('#content').html(newRegister.render().el);
+  },
+
+  updateProfile : function () {
+    // like not done lol
+
+     $.ajax({
+      url: "/user",
+      success: function(res) {
+        var updateProfile = new requestView(res);
+        $('#content').html(updateProfile.render().el);
+      }
+    });
+  },
+
+  requests: function () {
+    var request = new requestView();
+    $('#content').html(request.render().el);
   },
 
   home: function () {
@@ -12202,72 +12310,437 @@ var Router = Backbone.Router.extend({
       success: function(res) {
 
         // actually, this person is an admin
-        // if (res.type) == "admin" {
-        //   var adminView = new adminHomeView(res);
-        // }
-
-        if (res.username) {
-          var userView = new userHomeView(res);
+        if (res.type === "admin") {
+          var adminView = new adminHomeView(res);
+          $('#content').html(adminView.$el);
         }
 
         else {
-          var userView = new userHomeView({username:"guest", type: "guest"});
-        }
+          if (res.username) {
+            var userView = new userHomeView(res);
+          }
 
-        $('#content').html(userView.render().el);
+          else {
+            var userView = new guestHomeView();
+          }
+
+          $('#content').html(userView.render().el);
+        }
       }
     });
   }
-
-
 });
 
 
-
-// var items = new ItemCollection;
-// items.fetch({
-// 	success:function(){
-// 		var newView = new ItemCollectionView({collection:items});
-// 		newView.render();
-// 	}
-// });
-
 $(document).ready(function () {
-	var router = new Router();
+	var router = new Router;
 	Backbone.history.start();
 });
 
 
 
 
-},{"../../views/loginView":8,"../../views/userHomeView":9,"backbone":1,"jquery":3,"underscore":4}],6:[function(require,module,exports){
+},{"../../views/adminHomeView":22,"../../views/guestHomeView":26,"../../views/loginView":29,"../../views/requestView":32,"../../views/userHomeView":33,"../../views/userProfileView":36,"backbone":6,"jquery":8,"underscore":9}],11:[function(require,module,exports){
 module.exports = function(obj){
 var __t,__p='',__j=Array.prototype.join,print=function(){__p+=__j.call(arguments,'');};
 with(obj||{}){
-__p+='<div class = "login">\n\t<form action="/login" method="post">\n\t    <div>\n\t        <label>Username:</label>\n\t        <input type="text" name="username"/>\n\t    </div>\n\t    <div>\n\t        <label>Password:</label>\n\t        <input type="password" name="password"/>\n\t    </div>\n\t    <div>\n\t        <input type="submit" value="Log In"/>\n\t    </div>\n\t</form>\n</div>\n';
+__p+='<div>\n\t<h1> Welcome Minzzzzzzzzzadmin!</h1> \n\tYou can logout <a href ="/logout">here</a>.\n\tYou can add a <a class="add" href="javascript:void(0)"> new baked good</a>.\n\tYou can also look at <a href="/#requests">requests</a> here.\n\t<br><br>\n\t<div id="desserts"></div>\n</div>\n';
 }
 return __p;
 };
 
-},{}],7:[function(require,module,exports){
+},{}],12:[function(require,module,exports){
 module.exports = function(obj){
 var __t,__p='',__j=Array.prototype.join,print=function(){__p+=__j.call(arguments,'');};
 with(obj||{}){
-__p+='\n<div>\n\t';
-if (username) { 
-__p+='\n\t\t<h1> Hello '+
+__p+='<p id = "'+
+((__t=( name))==null?'':__t)+
+'">\n      You\'re looking at '+
+((__t=( name))==null?'':__t)+
+'.\n      It is made of '+
+((__t=( ingredients ))==null?'':__t)+
+'.\n      <button class ="btn btn-default edit" data-target="#myModal"> Edit </button>\n      <button class ="btn btn-default remove"> Delete </button>\n\n</p>';
+}
+return __p;
+};
+
+},{}],13:[function(require,module,exports){
+module.exports = function(obj){
+var __t,__p='',__j=Array.prototype.join,print=function(){__p+=__j.call(arguments,'');};
+with(obj||{}){
+__p+='<div class="modal fade adminEditModal" tabindex="-1" role="dialog" aria-labelledby="basicModal" aria-hidden="true">\n  <div class="modal-dialog">\n    <div class="modal-content">\n      <div class="modal-header">\n        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>\n        <h4 class="modal-title">Edit Item</h4>\n      </div>\n\n      <div class="modal-body">\n        <!-- The async form to send and replace the modals content with its response -->\n        <form class="form-horizontal" data-async action="/some-endpoint" method="POST">\n          <fieldset>\n            <!-- form content -->\n            <label class="control-label">Name</label>\n            <input class="form-control" id ="name" value="'+
+((__t=( name ))==null?'':__t)+
+'" placeholder="Name"></input>\n            <label class="control-label">Ingredients</label>\n            <input class="form-control" id ="ingredients" value="'+
+((__t=( ingredients ))==null?'':__t)+
+'" placeholder="List of Ingredients"></input>\n            <label class="control-label">Status</label>\n            <input class="form-control" id ="status" value="'+
+((__t=( status ))==null?'':__t)+
+'" placeholder="Status"></input>\n          </fieldset>\n        </form>\n      </div>\n\n      <div class="modal-footer">\n        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>\n        <button type="button" class="btn btn-primary save" data-dismiss="modal">Save changes</button>\n      </div>\n    </div><!-- /.modal-content -->\n  </div><!-- /.modal-dialog -->\n</div><!-- /.modal -->';
+}
+return __p;
+};
+
+},{}],14:[function(require,module,exports){
+module.exports = function(obj){
+var __t,__p='',__j=Array.prototype.join,print=function(){__p+=__j.call(arguments,'');};
+with(obj||{}){
+__p+='<div>\n\n\tYou can login <a href ="/login">here</a>.\n\tYou can register <a href ="/#register">here</a>.\n\n\t<br><br>\n\t<div id="desserts"></div>\n</div>\n';
+}
+return __p;
+};
+
+},{}],15:[function(require,module,exports){
+module.exports = function(obj){
+var __t,__p='',__j=Array.prototype.join,print=function(){__p+=__j.call(arguments,'');};
+with(obj||{}){
+__p+='<p id = "'+
+((__t=( name))==null?'':__t)+
+'">\n  You\'re looking at '+
+((__t=( name))==null?'':__t)+
+'.\n  It is made of '+
+((__t=( ingredients ))==null?'':__t)+
+'.\n\n</p>';
+}
+return __p;
+};
+
+},{}],16:[function(require,module,exports){
+module.exports = function(obj){
+var __t,__p='',__j=Array.prototype.join,print=function(){__p+=__j.call(arguments,'');};
+with(obj||{}){
+__p+='<div class = "login">\n\t<form action="/login" method="post">\n\t    <div>\n\t        <label>Username:</label>\n\t        <input type="text" name="username"/>\n\t    </div>\n\t    <div>\n\t        <label>Password:</label>\n\t        <input type="password" name="password"/>\n\t    </div>\n\t    <div>\n\t        <button class="btn btn-default" type="submit" >Log in </buton>\n\t    </div>\n\t</form>\n</div>\n';
+}
+return __p;
+};
+
+},{}],17:[function(require,module,exports){
+module.exports = function(obj){
+var __t,__p='',__j=Array.prototype.join,print=function(){__p+=__j.call(arguments,'');};
+with(obj||{}){
+__p+='<a href="/"> Go back </a>\n<table class="table" id="requests">\n\t<thead>\n\t\t<tr>\n\t\t\t<th> Contact </th>\n\t\t\t<th> User\'s name </th>\n\t\t\t<th> Requested Item </th>\n\t\t\t<th> Action </th>\n\t\t<tr>\n\t</thead>\n\t<tbody id="requestsBody">\n\t</tbody>\n</table>\n<button class="btn btn-primary contact">Contact Selected</button>';
+}
+return __p;
+};
+
+},{}],18:[function(require,module,exports){
+module.exports = function(obj){
+var __t,__p='',__j=Array.prototype.join,print=function(){__p+=__j.call(arguments,'');};
+with(obj||{}){
+__p+='<td>\n\t<center>\n\t\t<label>\n\t  \t\t<input type="checkbox" id="'+
+((__t=( id ))==null?'':__t)+
+'">\n\t\t</label>\n\t</center>\n</td>\n<td>'+
+((__t=( user ))==null?'':__t)+
+'</td>\n<td>'+
+((__t=( item ))==null?'':__t)+
+'</td>\n<td><button class ="btn btn-default remove"> Delete </button></td>\n';
+}
+return __p;
+};
+
+},{}],19:[function(require,module,exports){
+module.exports = function(obj){
+var __t,__p='',__j=Array.prototype.join,print=function(){__p+=__j.call(arguments,'');};
+with(obj||{}){
+__p+='\n<div>\n\t<h1> Hello '+
 ((__t=( username ))==null?'':__t)+
-'! </h1>\n\t';
- } else { 
-__p+='\n\t\t<h1> You don\'t have permission to view this page. </h1>\n\n\t';
- } 
-__p+='\n</div>\n';
+'! </h1>\n\n\tYou can logout <a href ="/logout">here</a>.\n\t\n\t<br><br>\n\t<div id="desserts"></div>\n</div>\n';
 }
 return __p;
 };
 
-},{}],8:[function(require,module,exports){
-var $ = require('jquery');
+},{}],20:[function(require,module,exports){
+module.exports = function(obj){
+var __t,__p='',__j=Array.prototype.join,print=function(){__p+=__j.call(arguments,'');};
+with(obj||{}){
+__p+='<p id = "'+
+((__t=( name))==null?'':__t)+
+'">\n  You\'re looking at '+
+((__t=( name))==null?'':__t)+
+'.\n  It is made of '+
+((__t=( ingredients ))==null?'':__t)+
+'.\n  \n  <button id = "request" class ="btn btn-default">\n  \t';
+ if ( isRequested ){ 
+__p+='\n    \tI don\'t want this!\n    ';
+ } else { 
+__p+='\n    \tI want this!\n    ';
+ } 
+__p+='\n  </button>\n\n</p>';
+}
+return __p;
+};
+
+},{}],21:[function(require,module,exports){
+module.exports = function(obj){
+var __t,__p='',__j=Array.prototype.join,print=function(){__p+=__j.call(arguments,'');};
+with(obj||{}){
+__p+='<div id = "alert_placeholder"></div>\n<form role="form">\n  <div class="form-group">\n    <label for="username">Username</label>\n    <input class="form-control" id="usernameForm" value="'+
+((__t=( username ))==null?'':__t)+
+'" placeholder="Enter new username">\n  </div>\n  <div class="form-group">\n    <label for="password">Password</label>\n    <input type="password" class="form-control" id="passwordForm" placeholder="Enter new password">\n  </div>\n  <div class="form-group">\n    <label for="email">Email</label>\n    <input type="email" class="form-control" id="emailForm" value="'+
+((__t=( email ))==null?'':__t)+
+'" placeholder="Enter email">\n  </div>\n  <div class="form-group">\n    <label for="phone">Phone</label>\n    <input class="form-control" id="phoneForm" value="'+
+((__t=( phone ))==null?'':__t)+
+'" placeholder="Enter phone number">\n  </div>\n  <button type="submit" class="btn btn-primary submit">Submit</button>\n</form>';
+}
+return __p;
+};
+
+},{}],22:[function(require,module,exports){
+var _ = require('underscore');
+var Backbone = require('backbone');
+Backbone.$ = $;
+_.$ = $;
+var adminItemCollectionView = require('../views/adminItemCollectionView');
+var ItemCollection = require('../collections/itemCollection');
+var template = require("../templates/adminHome.html");
+var adminItemModalView = require('../views/adminItemModalView');
+var itemModel = require('../models/item');
+
+module.exports = Backbone.View.extend({
+
+  events: {
+    "click .add" : "addNewItem"
+  },
+
+  initialize: function (model) {
+  	//get item collection
+	  this.items = new ItemCollection;
+	  var that = this;
+	  this.items.fetch({
+	  	success: function() {
+	  		that.render();
+	  	}
+	  });
+
+  },
+
+  render: function () {
+  	// renders dessert view
+    this.$el.html(template());
+    var newView = new adminItemCollectionView({collection: this.items});
+    this.$el.append(newView.render().el);
+    return this;
+  },
+
+  addNewItem: function() {
+    var newItem = new itemModel;
+    detailedView = new adminItemModalView({model: newItem, collection: this.items});
+    this.$el.append(detailedView.render().el);
+    detailedView.show();
+  }
+
+});
+
+
+},{"../collections/itemCollection":1,"../models/item":3,"../templates/adminHome.html":11,"../views/adminItemCollectionView":23,"../views/adminItemModalView":24,"backbone":6,"underscore":9}],23:[function(require,module,exports){
+var _ = require('underscore');
+var Backbone = require('backbone');
+Backbone.$ = $;
+_.$ = $;
+
+var adminItemView = require('../views/adminItemView');
+
+module.exports  = Backbone.View.extend({
+
+  initialize: function () {
+  	this.collection.bind('add', this.addOne, this);
+  },
+
+  tagName: "div",
+
+  el: "#desserts",
+
+  render: function() {
+  	this.collection.each(function(item) {
+  		var dessertView = new adminItemView({model: item, collection: this.collection});
+  		this.$el.append(dessertView.render().el);
+  	}, this);
+
+  	return this;
+  },
+
+  addOne: function (bakedGood) {
+		var newItem = new adminItemView({
+		    model: bakedGood,
+		    collection : this.collection
+		});
+
+		this.$el.append(newItem.render().el);
+  }
+  
+});
+
+
+},{"../views/adminItemView":25,"backbone":6,"underscore":9}],24:[function(require,module,exports){
+var _ = require('underscore');
+var Backbone = require('backbone');
+Backbone.$ = $;
+_.$ = $;
+
+var template = require("../templates/adminItemEditModal.html");
+
+module.exports = Backbone.View.extend({
+
+  events: {
+    "click .save" : "updateProperties"
+  },
+
+  updateProperties: function () {
+    this.$el.find('.modal').modal('hide');
+    $('body').removeClass('modal-open');
+    $('.modal-backdrop').remove();
+    
+    var newName = this.$el.find('#name').val();
+    var newIng = this.$el.find('#ingredients').val();
+    var newStat = this.$el.find('#status').val();
+
+    if (!this.collection.contains(this.model)) {
+      this.collection.create({name: newName, ingredients: newIng, status: newStat});
+    }
+    else { 
+      this.model.set({name: newName, ingredients: newIng, status: newStat});
+      this.model.save();
+    }
+
+
+  },
+
+  render: function() {
+    this.$el.html(template(this.model.toJSON()));
+    return this;
+  },
+
+  show: function() {
+    this.$el.find('.modal').modal('show');
+  }
+
+});
+
+},{"../templates/adminItemEditModal.html":13,"backbone":6,"underscore":9}],25:[function(require,module,exports){
+var _ = require('underscore');
+var Backbone = require('backbone');
+Backbone.$ = $;
+_.$ = $;
+var ItemModalView = require("../views/adminItemModalView.js");
+var template = require("../templates/adminItem.html");
+
+
+module.exports  = Backbone.View.extend({
+
+	events : {
+    "click .remove" : "clear",
+    "click .edit" : "editProperties"
+  },
+
+  initialize: function(model) {
+    this.model = model.model || {};
+    this.collection = model.collection;
+    this.listenTo(this.model, 'change', this.render);
+    this.listenTo(this.model, 'destroy', this.remove);
+    this.detailedView = new ItemModalView({model:this.model, collection:this.collection});
+
+  },
+
+  editProperties: function() {
+    this.detailedView.show();
+  },
+
+  clear : function () {
+    this.model.destroy();
+  },
+
+  render: function() {
+    this.$el.html(template(this.model.toJSON()));
+    $('body').append(this.detailedView.render().el);
+    return this;
+  }
+  
+});
+
+
+},{"../templates/adminItem.html":12,"../views/adminItemModalView.js":24,"backbone":6,"underscore":9}],26:[function(require,module,exports){
+var _ = require('underscore');
+var Backbone = require('backbone');
+Backbone.$ = $;
+_.$ = $;
+
+var template = require("../templates/guestHome.html");
+var guestItemView = require('../views/guestItemView');
+var guestItemCollectionView = require('../views/guestItemCollectionView');
+var ItemCollection = require('../collections/itemCollection');
+
+module.exports = Backbone.View.extend({
+
+  initialize: function (user) {
+  	this.items = new ItemCollection;
+    var that = this;
+    $.when(this.items.fetch()).done(function(){
+      that.render();
+    });
+
+  },
+
+  render: function () {
+    this.$el.html(template());
+    var newView = new guestItemCollectionView(
+    {
+      collection: this.items
+    });
+
+    this.$el.append(newView.render().el);
+    return this;
+  } 
+
+});
+
+
+},{"../collections/itemCollection":1,"../templates/guestHome.html":14,"../views/guestItemCollectionView":27,"../views/guestItemView":28,"backbone":6,"underscore":9}],27:[function(require,module,exports){
+var _ = require('underscore');
+var Backbone = require('backbone');
+Backbone.$ = $;
+_.$ = $;
+
+var guestItemView = require('../views/guestItemView');
+
+module.exports  = Backbone.View.extend({
+
+  tagName: "div",
+
+  el: "#desserts",
+
+  render: function() {
+  	this.collection.each(function(item) {
+  		var dessertView = new guestItemView({model: item});
+  		this.$el.append(dessertView.el);
+  	}, this);
+
+  	return this;
+  }
+  
+});
+
+
+},{"../views/guestItemView":28,"backbone":6,"underscore":9}],28:[function(require,module,exports){
+var _ = require('underscore');
+var Backbone = require('backbone');
+Backbone.$ = $;
+_.$ = $;
+var template = require("../templates/guestItem.html");
+
+module.exports  = Backbone.View.extend({
+
+  initialize: function(model) {
+    this.model = model.model || {};
+    this.render();
+  },
+
+  render: function() {
+    this.$el.html(template(this.model.toJSON()));
+    return this;
+  }
+  
+});
+
+
+},{"../templates/guestItem.html":15,"backbone":6,"underscore":9}],29:[function(require,module,exports){
 var _ = require('underscore');
 var Backbone = require('backbone');
 Backbone.$ = $;
@@ -12277,50 +12750,406 @@ _.$ = $;
 var template = require("../templates/login.html");
 
 
-var LoginView = Backbone.View.extend({
-
-  template: _.template(template()),
+module.exports = Backbone.View.extend({
 
   events: {
-    'submit form': 'submit',
+    'submit form': 'submit'
   },
 
   render: function () {
-    this.$el.html(this.template());
+    this.$el.html(template());
     return this;
-  },
-
-  submit : function(e) {
-    alert("hey");
   }
+  
 });
 
-module.exports = new LoginView();
+},{"../templates/login.html":16,"backbone":6,"underscore":9}],30:[function(require,module,exports){
+var _ = require('underscore');
+var Backbone = require('backbone');
+Backbone.$ = $;
+_.$ = $;
 
-},{"../templates/login.html":6,"backbone":1,"jquery":3,"underscore":4}],9:[function(require,module,exports){
-var $ = require('jquery');
+var requestItemView = require('../views/requestItemView');
+var listOfRequestViews = {};
+
+module.exports  = Backbone.View.extend({
+
+  tagName: "tbody",
+
+  el: "#requests",
+
+  initialize: function(params) {
+  	this.collection = params.collection;
+  },
+
+  contactUser: function(id) {
+    var val = listOfRequestViews[id];
+    val.contactUser();
+  },
+
+  render: function() {
+    this.collection.each(function(request) {
+      var requestView = new requestItemView(request);
+      this.$el.append(requestView.render().el);
+      listOfRequestViews[request.id] = requestView;
+    }, this);
+
+    return this;
+
+  }
+  
+});
+
+
+},{"../views/requestItemView":31,"backbone":6,"underscore":9}],31:[function(require,module,exports){
+var _ = require('underscore');
+var Backbone = require('backbone');
+Backbone.$ = $;
+_.$ = $;
+var template = require("../templates/requestItem.html");
+
+
+module.exports  = Backbone.View.extend({
+
+	tagName: "tr",
+
+  initialize: function(model) {
+		this.model = model;
+  },
+
+  contactUser: function() {
+  // 	if (this.phone !== "") {
+		// 	$.ajax({
+		//     url: "/sendText",
+		//     type: "POST",
+		//     data: {
+		//     	"phone" : this.phone,
+		//     	"item" : this.item
+		//   	}
+		//   });
+		// }
+		console.log(this.email);
+		if (this.email !== "") {
+			// also do ajax call
+			console.log("here");
+			$.ajax({
+		    url: "/sendEmail",
+		    type: "POST",
+		    data: {
+		    	"email" : this.email,
+		    	"item" : this.item
+		  	}
+		  });
+		}
+  },
+
+  render: function() {
+		var id = this.model.id;
+		this.user = "name";
+		this.item = "item";
+
+		$.ajax({
+	      url: "/items/" + this.model.get("requestedItem"),
+	      type: "GET",
+	      dataType: 'json'
+	    });
+
+	    var getItem = $.get("/items/" + this.model.get("requestedItem"), function(data,status){
+	   		return data;
+			});
+
+	   	var getUser = $.get("/users/" + this.model.get("user"), function(data,status){
+				return data;
+			});
+
+		var that = this;
+
+		$.when(getUser, getItem).done( function (user,item) {
+			console.log(user);
+			var username = JSON.parse(user[0]).username;
+			var phoneNumber = JSON.parse(user[0]).phone;
+			var email= JSON.parse(user[0]).email;
+			var itemName = JSON.parse(item[0]).name;
+	    
+		    that.$el.html(template(
+				{
+					user: username,
+					id: id,
+					item: itemName
+				}));
+
+			that.user = username;
+			that.item = itemName;
+			that.phone = phoneNumber;
+			that.email = email;
+
+	  });
+
+		return this;
+
+  }
+
+  
+});
+
+
+},{"../templates/requestItem.html":18,"backbone":6,"underscore":9}],32:[function(require,module,exports){
+var _ = require('underscore');
+var Backbone = require('backbone');
+Backbone.$ = $;
+_.$ = $;
+
+var template = require("../templates/request.html");
+var requestColView = require('../views/requestItemCollectionView');
+var requestCollection = require('../collections/requestCollection');
+
+module.exports = Backbone.View.extend({
+
+
+	events : {
+    	"click .contact" : "contactSelected"
+  	},
+
+	initialize: function () { 
+		this.collection = new requestCollection;
+		var that = this;
+		this.collection.fetch({
+			success: function () {
+				that.render();
+			}
+		});
+
+	},
+
+	render: function () {
+		this.$el.html(template());
+		this.newView = new requestColView({collection: this.collection}); 
+		this.$el.append(this.newView.render().el);
+    	return this;
+	},
+
+	contactSelected: function () {
+		var that = this;
+		$('input[type=checkbox]').each(function () {
+			if (this.checked) {
+				var checkedID = $(this).attr("id");
+ 				that.newView.contactUser(checkedID);
+			}
+  	});
+
+	}
+
+});
+},{"../collections/requestCollection":2,"../templates/request.html":17,"../views/requestItemCollectionView":30,"backbone":6,"underscore":9}],33:[function(require,module,exports){
 var _ = require('underscore');
 var Backbone = require('backbone');
 Backbone.$ = $;
 _.$ = $;
 
 var template = require("../templates/userHome.html");
-
+var ItemCollection = require('../collections/itemCollection');
+var RequestCollection = require('../collections/requestCollection');
+var userItemCollectionView = require('../views/userItemCollectionView');
 
 module.exports = Backbone.View.extend({
 
+  initialize: function (user) {
+  	this.user = user || {};
+    this.userRequests = new RequestCollection;
 
-  initialize: function (model) {
-  	this.model = model || {};
+  	this.items = new ItemCollection;
+    var that = this;
+    $.when(this.items.fetch(), this.userRequests.fetch()).done(function(){
+      that.render();
+    });
+
   },
 
   render: function () {
-  	console.log(this.model);
-    this.$el.html(template(this.model));
+    this.$el.html(template(this.user));
+    var newView = new userItemCollectionView(
+    {
+      collection: this.items, 
+      user: this.user,
+      userRequests: this.userRequests
+    });
+
+    this.$el.append(newView.render().el);
     return this;
   } 
 
 });
 
 
-},{"../templates/userHome.html":7,"backbone":1,"jquery":3,"underscore":4}]},{},[5])
+},{"../collections/itemCollection":1,"../collections/requestCollection":2,"../templates/userHome.html":19,"../views/userItemCollectionView":34,"backbone":6,"underscore":9}],34:[function(require,module,exports){
+var _ = require('underscore');
+var Backbone = require('backbone');
+Backbone.$ = $;
+_.$ = $;
+
+var userItemView = require('../views/userItemView');
+
+module.exports  = Backbone.View.extend({
+
+  tagName: "div",
+
+  el: "#desserts",
+
+  initialize: function(params) {
+  	this.user = params.user;
+  	this.collection = params.collection;
+    this.userRequests = params.userRequests;
+  },
+
+  render: function() {
+  	user = this.user;
+  	this.collection.each(function(item) {
+  		var dessertView = new userItemView({model: item, user: user, userRequests: this.userRequests});
+  		this.$el.append(dessertView.el);
+  	}, this);
+
+  	return this;
+  }
+  
+});
+
+
+},{"../views/userItemView":35,"backbone":6,"underscore":9}],35:[function(require,module,exports){
+var _ = require('underscore');
+var Backbone = require('backbone');
+Backbone.$ = $;
+_.$ = $;
+var template = require("../templates/userItem.html");
+var requestModel = require('../models/request');
+
+module.exports  = Backbone.View.extend({
+
+	events : {
+    "click #request" : "toggleRequests"
+  },
+
+  initialize: function(model) {
+    this.model = model.model || {};
+    this.user = model.user;
+    this.userRequests = model.userRequests;
+    this.render();
+  },
+
+  render: function() {
+    this.requestMayExist = this.userRequests.byUserAndModel(this.user.id, this.model.id);
+
+    if (this.requestMayExist.length < 1) {
+        this.model.set("isRequested", false);
+    } 
+    else {
+      this.model.set("isRequested", true);
+    }
+    this.$el.html(template(this.model.toJSON()));
+    return this;
+  },
+
+  toggleRequests: function() { 
+
+    if (this.$el.find("#request").html().trim() === "I want this!") {
+
+      var newRequest = new requestModel(
+        {
+          user: this.user.id,
+          requestedItem : this.model.id
+        }
+      );
+
+      newRequest.save();
+
+      $.ajax({
+        url: "/item/incReqCount",
+        type: "PUT",
+        data: {id: this.model.id}
+      });
+
+      this.$el.find("#request").text("I don't want this!");
+
+    }
+
+    else {
+
+      $.ajax({
+        url: "/item/decReqCount",
+        type: "PUT",
+        data: {id: this.model.id}
+      });
+
+      $.ajax({
+        url: "/requests",
+        type: "DELETE",
+        data: {id: this.model.id, userid: this.user.id}
+      });
+
+      this.$el.find("#request").text("I want this!");
+
+    }
+
+  }
+  
+});
+
+
+},{"../models/request":4,"../templates/userItem.html":20,"backbone":6,"underscore":9}],36:[function(require,module,exports){
+var _ = require('underscore');
+var Backbone = require('backbone');
+Backbone.$ = $;
+_.$ = $;
+
+var template = require("../templates/userProfile.html");
+var userModel = require('../models/user');
+
+var warning = function(message) {
+    $('#alert_placeholder').html('<div class="alert alert-danger alert-dismissable"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button><span>'+
+    	message + '</span></div>');
+}
+
+module.exports = Backbone.View.extend({
+	events: {
+    	"click .submit" : "addNewUser"
+  	},
+
+
+  	addNewUser: function () {
+  		var un = this.$el.find('#usernameForm').val();
+    	var pw = this.$el.find('#passwordForm').val();
+    	var email = this.$el.find('#emailForm').val();
+    	var phone = this.$el.find("#phoneForm").val();
+
+  		this.user.save(
+  			{
+  				"username" : un,
+  				"password" : pw,
+  				"email" : email,
+  				"phone" : phone
+
+  			}, 
+  			{
+	  			success: function (model, response, options) {
+	  				window.location = response.redirect;
+	  			},
+	  			error : function (model, response, options) {
+	  				warning("All fields are required, check your inputs again!");
+
+	  			}
+  			}
+  		);
+
+  	},
+
+	initialize: function (params) { 
+		this.user = params || new userModel;
+
+	},
+
+	render: function () {
+		this.$el.html(template(this.user.toJSON()));
+		return this;
+	}
+
+});
+},{"../models/user":5,"../templates/userProfile.html":21,"backbone":6,"underscore":9}]},{},[10])

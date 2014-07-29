@@ -1,0 +1,13 @@
+<p id = "<%= name%>">
+  You're looking at <%= name%>.
+  It is made of <%= ingredients %>.
+  
+  <button id = "request" class ="btn btn-default">
+  	<% if ( isRequested ){ %>
+    	I don't want this!
+    <% } else { %>
+    	I want this!
+    <% } %>
+  </button>
+
+</p>

@@ -9,6 +9,7 @@ module.exports = Backbone.Model.extend({
   		"ingredients": "love",
   		"status": "not started",
   		"img" : "",
+  		"request" : 0
     },
 
   idAttribute: "_id",

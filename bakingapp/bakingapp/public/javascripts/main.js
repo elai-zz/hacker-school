@@ -1,50 +1,53 @@
 var $ = require('jquery');
 var Backbone = require('backbone');
 var _ = require('underscore');
-var Marionette = require('backbone.marionette');
 _.$ = $;
 Backbone.$ = $;
+var Backbone = require('backbone');
 var loginView = require('../../views/loginView');
 var userHomeView = require('../../views/userHomeView');
-//var adminHomeView = require('../../views/adminHomeView');
-
-
-var Item = Backbone.Model.extend({
-  
-  defaults: {
-  		"name": "mystery baked good",
-  		"ingredients": "love",
-  		"status": "not started",
-  		"img" : "",
-    },
-
-  idAttribute: "_id",
-
-  urlRoot: "/items"
-
-});
-
-var ItemCollection = Backbone.Collection.extend({
-	  
-	model: Item,
-	url: "/items"
-
-});
-
+var adminHomeView = require('../../views/adminHomeView');
+var guestHomeView = require('../../views/guestHomeView');
+var requestView = require('../../views/requestView');
+var userProfileView = require('../../views/userProfileView');
 
 var Router = Backbone.Router.extend({
 
-  initialize: function () {
-  	console.log('hello im here');
-  },
-
   routes: {
     "login": "login",  
-    "" : "home"
+    "" : "home",
+    "home": "home",
+    "register" : "register",
+    "update_profile" : "updateProfile",
+    "addNewBakedGood": "addNewBakedGood",
+    "requests": "requests"
   },
 
   login: function () {
-  	$('#content').html(loginView.render().el);
+    var login = new loginView();
+    $('#content').html(login.render().el);
+  },
+
+  register : function () {
+    var newRegister = new userProfileView();
+    $('#content').html(newRegister.render().el);
+  },
+
+  updateProfile : function () {
+    // like not done lol
+
+     $.ajax({
+      url: "/user",
+      success: function(res) {
+        var updateProfile = new requestView(res);
+        $('#content').html(updateProfile.render().el);
+      }
+    });
+  },
+
+  requests: function () {
+    var request = new requestView();
+    $('#content').html(request.render().el);
   },
 
   home: function () {
@@ -53,38 +56,30 @@ var Router = Backbone.Router.extend({
       success: function(res) {
 
         // actually, this person is an admin
-        if (res.type) == "admin" {
+        if (res.type === "admin") {
           var adminView = new adminHomeView(res);
-        }
-
-        if (res.username) {
-          var userView = new userHomeView(res);
+          $('#content').html(adminView.$el);
         }
 
         else {
-          var userView = new userHomeView({username:"guest", type: "guest"});
-        }
+          if (res.username) {
+            var userView = new userHomeView(res);
+          }
 
-        $('#content').html(userView.render().el);
+          else {
+            var userView = new guestHomeView();
+          }
+
+          $('#content').html(userView.render().el);
+        }
       }
     });
   }
-
-
 });
 
 
-
-// var items = new ItemCollection;
-// items.fetch({
-// 	success:function(){
-// 		var newView = new ItemCollectionView({collection:items});
-// 		newView.render();
-// 	}
-// });
-
 $(document).ready(function () {
-	var router = new Router();
+	var router = new Router;
 	Backbone.history.start();
 });
 

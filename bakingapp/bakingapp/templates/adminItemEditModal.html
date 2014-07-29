@@ -1,0 +1,30 @@
+<div class="modal fade adminEditModal" tabindex="-1" role="dialog" aria-labelledby="basicModal" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+        <h4 class="modal-title">Edit Item</h4>
+      </div>
+
+      <div class="modal-body">
+        <!-- The async form to send and replace the modals content with its response -->
+        <form class="form-horizontal" data-async action="/some-endpoint" method="POST">
+          <fieldset>
+            <!-- form content -->
+            <label class="control-label">Name</label>
+            <input class="form-control" id ="name" value="<%= name %>" placeholder="Name"></input>
+            <label class="control-label">Ingredients</label>
+            <input class="form-control" id ="ingredients" value="<%= ingredients %>" placeholder="List of Ingredients"></input>
+            <label class="control-label">Status</label>
+            <input class="form-control" id ="status" value="<%= status %>" placeholder="Status"></input>
+          </fieldset>
+        </form>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary save" data-dismiss="modal">Save changes</button>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
